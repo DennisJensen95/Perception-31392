@@ -231,7 +231,7 @@ class Calibration:
             image_l = self.images[idx][0]
             image_r = self.images[idx][1]
         else:
-            assert(images != None), "Please input images or use random from calibration data images"
+            assert(len(images) == 2), "Please input images or use random from calibration data images"
             image_l = images[0]
             image_r = images[1]
 
@@ -274,9 +274,18 @@ class Calibration:
         # remap
         imglCalRect = cv2.remap(img_l, self.leftMapX, self.leftMapY, cv2.INTER_LINEAR)
         imgrCalRect = cv2.remap(img_r, self.rightMapX, self.rightMapY, cv2.INTER_LINEAR)
-        numpyHorizontalCalibRect = np.hstack((imglCalRect, imgrCalRect))
 
         if debug:
+            fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(18, 18))
+            ax[0].imshow(img_l)
+            ax[0].set_title('Rectified image left')
+            # crop the image
+            ax[1].imshow(dst)
+            ax[1].set_title('Rectified image right')
+            plt.show()
+
+        if debug:
+            numpyHorizontalCalibRect = np.hstack((imglCalRect, imgrCalRect))
             ### SHOW RESULTS ###
             # calculate point arrays for epipolar lines
             lineThickness = 5
@@ -301,7 +310,7 @@ class Calibration:
             if k == 27:
                 cv2.destroyAllWindows()
 
-        return numpyHorizontalCalibRect
+        return imglCalRect, imgrCalRect
 
 if __name__ == '__main__':
     test_images = [["Left", "Right"], ["Left_2", "Right_2"], ["Left_3", "Right_3"]]
