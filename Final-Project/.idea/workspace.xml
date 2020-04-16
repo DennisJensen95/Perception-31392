@@ -1,9 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="dbe3e76b-059f-40f0-8d64-091c6d750eab" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/calibration_test.py" beforeDir="false" afterPath="$PROJECT_DIR$/calibration_test.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/calibration.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/calibration.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/Final-Project.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Final-Project.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/getDataGoogle.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/getDataGoogle.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/testFastRCNN.py" beforeDir="false" afterPath="$PROJECT_DIR$/testFastRCNN.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_google_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/test_google_data.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -24,7 +47,6 @@
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
-    <option name="showExcludedFiles" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
@@ -145,6 +167,9 @@
     </task>
     <servers />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
   <component name="WindowStateProjectService">
     <state x="650" y="358" width="610" height="404" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1586019450679">
       <screen x="0" y="27" width="1920" height="1053" />
@@ -154,22 +179,26 @@
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
     <state x="738" y="317" width="424" height="491" key="FileChooserDialogImpl/0.27.1920.1053@0.27.1920.1053" timestamp="1586072310232" />
-    <state width="1897" height="275" key="GridCell.Tab.0.bottom" timestamp="1586251917893">
-      <screen x="0" y="27" width="1920" height="1053" />
+    <state width="1897" height="275" key="GridCell.Tab.0.bottom" timestamp="1587034684734">
+      <screen x="0" y="511" width="1920" height="1053" />
     </state>
     <state width="1897" height="275" key="GridCell.Tab.0.bottom/0.27.1920.1053@0.27.1920.1053" timestamp="1586251917893" />
-    <state width="1897" height="275" key="GridCell.Tab.0.center" timestamp="1586251917893">
-      <screen x="0" y="27" width="1920" height="1053" />
+    <state width="1897" height="275" key="GridCell.Tab.0.bottom/0.511.1920.1053/1920.0.1080.1920@0.511.1920.1053" timestamp="1587034684734" />
+    <state width="1897" height="275" key="GridCell.Tab.0.center" timestamp="1587034684734">
+      <screen x="0" y="511" width="1920" height="1053" />
     </state>
     <state width="1897" height="275" key="GridCell.Tab.0.center/0.27.1920.1053@0.27.1920.1053" timestamp="1586251917893" />
-    <state width="1897" height="275" key="GridCell.Tab.0.left" timestamp="1586251917893">
-      <screen x="0" y="27" width="1920" height="1053" />
+    <state width="1897" height="275" key="GridCell.Tab.0.center/0.511.1920.1053/1920.0.1080.1920@0.511.1920.1053" timestamp="1587034684734" />
+    <state width="1897" height="275" key="GridCell.Tab.0.left" timestamp="1587034684734">
+      <screen x="0" y="511" width="1920" height="1053" />
     </state>
     <state width="1897" height="275" key="GridCell.Tab.0.left/0.27.1920.1053@0.27.1920.1053" timestamp="1586251917893" />
-    <state width="1897" height="275" key="GridCell.Tab.0.right" timestamp="1586251917893">
-      <screen x="0" y="27" width="1920" height="1053" />
+    <state width="1897" height="275" key="GridCell.Tab.0.left/0.511.1920.1053/1920.0.1080.1920@0.511.1920.1053" timestamp="1587034684734" />
+    <state width="1897" height="275" key="GridCell.Tab.0.right" timestamp="1587034684734">
+      <screen x="0" y="511" width="1920" height="1053" />
     </state>
     <state width="1897" height="275" key="GridCell.Tab.0.right/0.27.1920.1053@0.27.1920.1053" timestamp="1586251917893" />
+    <state width="1897" height="275" key="GridCell.Tab.0.right/0.511.1920.1053/1920.0.1080.1920@0.511.1920.1053" timestamp="1587034684734" />
     <state width="1897" height="340" key="GridCell.Tab.1.bottom" timestamp="1586184481107">
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
