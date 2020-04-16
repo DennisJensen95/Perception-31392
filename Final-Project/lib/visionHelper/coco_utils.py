@@ -6,8 +6,8 @@ import torch
 import torch.utils.data
 import torchvision
 
-# from pycocotools import mask as coco_mask
-# from pycocotools.coco import COCO
+from pycocotools import mask as coco_mask
+from pycocotools.coco import COCO
 
 import lib.visionHelper.transforms as T
 

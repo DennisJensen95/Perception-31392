@@ -1,5 +1,8 @@
 from lib.fastRCNNPretrained import *
 from lib.prepareData import *
+from lib.trainResnet50RCNN import getModel
+from lib.getDataGoogle import classes_encoder, get_transform
+import torch
 import glob
 
 test_1 = False
@@ -83,4 +86,23 @@ if test_2:
 
 if test_3:
     """ Test trained model """
+
+    images = sorted(glob.glob('./data/stereo_conveyor_without_occlusions/left/*.png'))
+    image_file = images[400]
+    image = cv2.imread(image_file)
+    cv2.imshow('target', image)
+    cv2.waitKey(0)
+
+    # Get a decoder
+    classes_decoder = inv_map = {v: k for k, v in classes_encoder.items()}
+
+    num_classes = len(classes_encoder) + 1
+    model = getModel(num_classes)
+    model.load_state_dict(torch.load('rcnn-test-data/trained_models/model_1/model_1_epoch_5'))
+
+    model.eval()
+    img = Image.open(image_file).convert('RGB')
+    img =
+    output = model([img])
+
 

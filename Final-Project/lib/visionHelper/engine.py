@@ -5,8 +5,8 @@ import torch
 
 import torchvision.models.detection.mask_rcnn
 
-# from lib.visionHelper.coco_utils import get_coco_api_from_dataset
-# from lib.visionHelper.coco_eval import CocoEvaluator
+from lib.visionHelper.coco_utils import get_coco_api_from_dataset
+from lib.visionHelper.coco_eval import CocoEvaluator
 import lib.visionHelper.utils as utils
 
 

@@ -46,11 +46,12 @@ model = getModel(num_classes)
 images, targets = next(iter(data_loader))
 images = list(image for image in images)
 targets = [{k: v for k, v in t.items()} for t in targets]
-print(targets)
-print(images)
+# print(targets)
+# print(images)
 output = model(images, targets)   # Returns losses and detections
 
 # For inference
 model.eval()
 x = [torch.rand(3, 300, 400), torch.rand(3, 500, 400)]
 predictions = model(x)           # Returns predictions
+print(predictions)
