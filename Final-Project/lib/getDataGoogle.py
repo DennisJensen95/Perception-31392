@@ -218,16 +218,18 @@ class DataSetLoader(object):
     def __getitem__(self, idx):
         """Get an image"""
         img = Image.open(self.dataframe['ImgPath'][idx]).convert('RGB')
-        width, height, channels = np.asarray(img).shape
+        height, width, channels = np.asarray(img).shape
 
         print(f'width: {width}, height: {height}')
 
         img = cv2.imread(self.dataframe['ImgPath'][idx])
+
+        box = [[int(self.dataframe['XMin'][idx] * width), int(self.dataframe['YMin'][idx]*height),
+               int(self.dataframe['XMax'][idx] * width), int(self.dataframe['YMax'][idx]* height)]]
+
+        cv2.rectangle(img, (box[0][0], box[0][1]), (box[0][2], box[0][3]), color=(255,0,0), thickness=1)
         cv2.imshow('target', img)
         cv2.waitKey(0)
-
-        box = [[self.dataframe['XMin'][idx], self.dataframe['YMin'][idx],
-               self.dataframe['XMax'][idx], self.dataframe['YMax'][idx]]]
 
         box = torch.as_tensor(box, dtype=torch.float32)
         area = (box[:, 3] - box[:, 1]) * (box[:, 2] - box[:, 0])
@@ -238,7 +240,6 @@ class DataSetLoader(object):
         # Class labels encoded in numbers
         labels = [self.classes_encoder[self.dataframe['ClassName'][idx]]]
         labels = torch.as_tensor(labels, dtype=torch.int64)
-        # labels = torch.ones((1, ), dtype=torch.int64)
 
 
         target = {}
