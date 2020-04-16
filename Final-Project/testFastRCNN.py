@@ -3,7 +3,8 @@ from lib.prepareData import *
 import glob
 
 test_1 = False
-test_2 = True
+test_2 = False
+test_3 = True
 
 if test_1:
 
@@ -79,3 +80,5 @@ if test_2:
     print('')
     print('length of the class_descriptions: %d' % (len(class_descriptions) - 1))
     img = io.imread(img_url)
+
+if test_3:
