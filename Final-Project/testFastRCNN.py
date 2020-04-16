@@ -82,3 +82,6 @@ if test_2:
     img = io.imread(img_url)
 
 if test_3:
+    """ Test trained model """
+
+    

@@ -10,6 +10,10 @@ import os
 import shutil
 from skimage import io
 import re
+from sklearn.model_selection import train_test_split
+from PIL import Image
+import torch
+from lib.visionHelper import transforms as T
 
 class GetGoogleDataset(object):
 
@@ -30,6 +34,17 @@ class GetGoogleDataset(object):
         self.sub_sample_data = {}
         self.sub_sample_img_url = {}
 
+        self.annotations_data_frames = {}
+        self.label_names = []
+        for _class in self.classes:
+            class_pd = self.class_descriptor[self.class_descriptor['class'] == _class]
+            # Get label for specific class
+            label = class_pd['name'].values[0]
+            self.label_names.append(label)
+            # Box drawing around images
+            annotations = self.train_annnotations[self.train_annnotations['LabelName'] == label]
+            self.annotations_data_frames.update({_class: annotations})
+
         self.loaded_data = False
 
         self.debug = debug
@@ -45,9 +60,9 @@ class GetGoogleDataset(object):
 
     def selectClasses(self):
         # Find label name for the classes selected
-        labels = []
+        self.label_names = []
         class_data_frames = []
-        annotations_data_frames = []
+        self.annotations_data_frames = {}
         self.sub_sample_data = {}
         self.sub_sample_img_url = {}
         for _class in self.classes:
@@ -56,11 +71,11 @@ class GetGoogleDataset(object):
             class_data_frames.append(class_pd)
             # Get label for specific class
             label = class_pd['name'].values[0]
-            labels.append(label)
+            self.label_names.append(label)
 
             # Box drawing around images
             annotations = self.train_annnotations[self.train_annnotations['LabelName'] == label]
-            annotations_data_frames.append(annotations)
+            self.annotations_data_frames.update({_class: annotations})
 
             # images with unique items in them
             contains_object_id = np.unique(annotations['ImageID'])
@@ -125,6 +140,124 @@ class GetGoogleDataset(object):
                 name = re.findall('/(\w+.jpg)', url)[0]
                 saved_path = os.path.join(path, name)
                 io.imsave(saved_path, img)
+
+
+    def prepareDataSet(self):
+        path_test = os.path.join(self.save_images_base, 'test')
+        path_train = os.path.join(self.save_images_base, 'train')
+
+        train_df = pd.DataFrame(columns=['ImgPath', 'XMin', 'XMax', 'YMin', 'YMax', 'ClassName'])
+        test_df = pd.DataFrame(columns=['File', 'XMin', 'XMax', 'YMin', 'YMax', 'ClassName'])
+
+
+        for _class in self.classes:
+            print(f'Making training set for class {_class} \n')
+
+            path_images = os.path.join(self.save_images_base, _class)
+            images = os.listdir(path_images)
+
+            X_train, X_test = train_test_split(images, test_size=0.20)
+
+            print(f'Doing train')
+            print(f'len train {len(X_train)}')
+            for i in range(len(X_train)):
+                img_name = X_train[i]
+                if i % 100 == 0:
+                    print(f'Images left to sort: {len(X_train) - i}')
+                img_id = re.findall('(\w+).jpg', img_name)[0]
+                data_img = self.annotations_data_frames[_class][self.annotations_data_frames[_class]['ImageID'] == img_id]
+                img_path = os.path.join(path_images, img_name)
+                for idx, row in data_img.iterrows():
+                    label = row['LabelName']
+                    for j in range(len(self.label_names)):
+                        if label == self.label_names[j]:
+                            train_df = train_df.append({'ImgPath': img_path,
+                                                        'XMin': row['XMin'],
+                                                        'XMax': row['XMax'],
+                                                        'YMin': row['YMin'],
+                                                        'YMax': row['YMax'],
+                                                        'ClassName': self.classes[j]},
+                                                       ignore_index=True)
+
+            print(f'Doing test')
+            print(f'len test: {len(X_test)}')
+            for i in range(len(X_test)):
+                img_name = X_test[i]
+                img_id = re.findall('(\w+).jpg', img_name)[0]
+                data_img = self.annotations_data_frames[_class][self.annotations_data_frames[_class]['ImageID'] == img_id]
+                img_path = os.path.join(path_images, img_name)
+
+                if i % 100 == 0:
+                    print(f'Images left to sort: {len(X_test) - i}')
+
+                for idx, row in data_img.iterrows():
+                    label = row['LabelName']
+                    for j in range(len(self.label_names)):
+                        if label == self.label_names[j]:
+                            test_df = test_df.append({'ImgPath': img_path,
+                                                      'XMin': row['XMin'],
+                                                      'XMax': row['XMax'],
+                                                      'YMin': row['YMin'],
+                                                      'YMax': row['YMax'],
+                                                      'ClassName': self.classes[j]},
+                                                     ignore_index=True)
+
+        train_df.to_csv(os.path.join(path_train, 'train_dataframe_2.csv'))
+        test_df.to_csv(os.path.join(path_test, 'test_dataframe_2.csv'))
+
+
+class DataSetLoader(object):
+
+    def __init__(self, dataframe, transforms, classes_encoder):
+        self.transforms = transforms
+        self.dataframe = dataframe
+        self.classes_encoder = classes_encoder
+
+
+    def __getitem__(self, idx):
+        """Get an image"""
+        img = Image.open(self.dataframe['ImgPath'][idx]).convert('RGB')
+
+        box = [[self.dataframe['XMin'][idx], self.dataframe['YMin'][idx],
+               self.dataframe['XMax'][idx], self.dataframe['YMax'][idx]]]
+
+        box = torch.as_tensor(box, dtype=torch.float32)
+        area = (box[:, 3] - box[:, 1]) * (box[:, 2] - box[:, 0])
+        img_id = torch.tensor([idx])
+
+        iscrowd = torch.zeros((1,), dtype=torch.int64)
+
+        # Class labels encoded in numbers
+        labels = [self.classes_encoder[self.dataframe['ClassName'][idx]]]
+        labels = torch.as_tensor(labels, dtype=torch.int64)
+        # labels = torch.ones((1, ), dtype=torch.int64)
+
+
+        target = {}
+        target["boxes"] = box
+        target["labels"] = labels
+        target["image_id"] = img_id
+        target["area"] = area
+        target["iscrowd"] = iscrowd
+
+        if self.transforms is not None:
+            img, target = self.transforms(img, target)
+
+        return img, target
+
+    def __len__(self):
+        return len(self.dataframe['ImgPath'])
+
+def get_transform(train):
+    transforms = []
+    transforms.append(T.ToTensor())
+    if train:
+        transforms.append(T.RandomHorizontalFlip(0.5))
+    return T.Compose(transforms)
+
+classes_encoder = {'Box': 1, 'Book': 2, 'Coffee cup': 3}
+
+
 
 
 
