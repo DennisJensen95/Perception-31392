@@ -19,15 +19,7 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="dbe3e76b-059f-40f0-8d64-091c6d750eab" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/Final-Project.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Final-Project.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/getDataGoogle.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/getDataGoogle.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/testFastRCNN.py" beforeDir="false" afterPath="$PROJECT_DIR$/testFastRCNN.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_google_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/test_google_data.py" afterDir="false" />
-    </list>
+    <list default="true" id="dbe3e76b-059f-40f0-8d64-091c6d750eab" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
