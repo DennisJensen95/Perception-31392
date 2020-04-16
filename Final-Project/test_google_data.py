@@ -45,6 +45,7 @@ num_classes = len(classes_encoder) + 1
 model = getModel(num_classes)
 images, targets = next(iter(data_loader))
 images = list(image for image in images)
+print(images)
 targets = [{k: v for k, v in t.items()} for t in targets]
 # print(targets)
 # print(images)

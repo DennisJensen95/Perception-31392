@@ -1,7 +1,9 @@
 from lib.fastRCNNPretrained import *
 from lib.prepareData import *
 from lib.trainResnet50RCNN import getModel
-from lib.getDataGoogle import classes_encoder, get_transform
+from lib.getDataGoogle import classes_encoder
+from lib.visionHelper import transforms as T
+from torchvision import transforms, models
 import torch
 import glob
 
@@ -98,11 +100,12 @@ if test_3:
 
     num_classes = len(classes_encoder) + 1
     model = getModel(num_classes)
-    model.load_state_dict(torch.load('rcnn-test-data/trained_models/model_1/model_1_epoch_5'))
-
+    # model.load_state_dict(torch.load('rcnn-test-data/trained_models/model_1/model_1_epoch_5'))
+    model = models.detection.fasterrcnn_resnet50_fpn(pretrained=True)
     model.eval()
     img = Image.open(image_file).convert('RGB')
-    img =
+    img = transforms.ToTensor()(img)
     output = model([img])
 
+    print(output)
 

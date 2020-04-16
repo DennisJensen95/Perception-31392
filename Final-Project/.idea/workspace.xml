@@ -20,19 +20,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="dbe3e76b-059f-40f0-8d64-091c6d750eab" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/rcnn-test-data/class-descriptions-boxable.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/rcnn-test-data/trained_models/model_1/model_1_epoch_0" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/rcnn-test-data/trained_models/model_1/model_1_epoch_1" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/rcnn-test-data/trained_models/model_1/model_1_epoch_2" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/rcnn-test-data/trained_models/model_1/model_1_epoch_3" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/rcnn-test-data/trained_models/model_1/model_1_epoch_4" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/rcnn-test-data/trained_models/model_1/model_1_epoch_5" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/visionHelper/coco_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/visionHelper/coco_utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/visionHelper/engine.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/visionHelper/engine.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/testFastRCNN.py" beforeDir="false" afterPath="$PROJECT_DIR$/testFastRCNN.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test_google_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/test_google_data.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trainFasterRCNN.py" beforeDir="false" afterPath="$PROJECT_DIR$/trainFasterRCNN.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -186,34 +176,35 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="650" y="358" width="610" height="404" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1586019450679">
-      <screen x="0" y="27" width="1920" height="1053" />
+    <state x="650" y="842" width="652" height="404" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1587039060345">
+      <screen x="0" y="511" width="1920" height="1053" />
     </state>
     <state x="650" y="358" width="610" height="404" key="#com.intellij.fileTypes.FileTypeChooser/0.27.1920.1053@0.27.1920.1053" timestamp="1586019450679" />
+    <state x="650" y="842" width="652" height="404" key="#com.intellij.fileTypes.FileTypeChooser/0.511.1920.1053/1920.0.1080.1920@0.511.1920.1053" timestamp="1587039060345" />
     <state x="738" y="317" width="424" height="491" key="FileChooserDialogImpl" timestamp="1586072310232">
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
     <state x="738" y="317" width="424" height="491" key="FileChooserDialogImpl/0.27.1920.1053@0.27.1920.1053" timestamp="1586072310232" />
-    <state width="1897" height="275" key="GridCell.Tab.0.bottom" timestamp="1587038430002">
+    <state width="1897" height="275" key="GridCell.Tab.0.bottom" timestamp="1587039669353">
       <screen x="0" y="511" width="1920" height="1053" />
     </state>
     <state width="1897" height="275" key="GridCell.Tab.0.bottom/0.27.1920.1053@0.27.1920.1053" timestamp="1586251917893" />
-    <state width="1897" height="275" key="GridCell.Tab.0.bottom/0.511.1920.1053/1920.0.1080.1920@0.511.1920.1053" timestamp="1587038430002" />
-    <state width="1897" height="275" key="GridCell.Tab.0.center" timestamp="1587038430001">
+    <state width="1897" height="275" key="GridCell.Tab.0.bottom/0.511.1920.1053/1920.0.1080.1920@0.511.1920.1053" timestamp="1587039669353" />
+    <state width="1897" height="275" key="GridCell.Tab.0.center" timestamp="1587039669353">
       <screen x="0" y="511" width="1920" height="1053" />
     </state>
     <state width="1897" height="275" key="GridCell.Tab.0.center/0.27.1920.1053@0.27.1920.1053" timestamp="1586251917893" />
-    <state width="1897" height="275" key="GridCell.Tab.0.center/0.511.1920.1053/1920.0.1080.1920@0.511.1920.1053" timestamp="1587038430001" />
-    <state width="1897" height="275" key="GridCell.Tab.0.left" timestamp="1587038430001">
+    <state width="1897" height="275" key="GridCell.Tab.0.center/0.511.1920.1053/1920.0.1080.1920@0.511.1920.1053" timestamp="1587039669353" />
+    <state width="1897" height="275" key="GridCell.Tab.0.left" timestamp="1587039669353">
       <screen x="0" y="511" width="1920" height="1053" />
     </state>
     <state width="1897" height="275" key="GridCell.Tab.0.left/0.27.1920.1053@0.27.1920.1053" timestamp="1586251917893" />
-    <state width="1897" height="275" key="GridCell.Tab.0.left/0.511.1920.1053/1920.0.1080.1920@0.511.1920.1053" timestamp="1587038430001" />
-    <state width="1897" height="275" key="GridCell.Tab.0.right" timestamp="1587038430002">
+    <state width="1897" height="275" key="GridCell.Tab.0.left/0.511.1920.1053/1920.0.1080.1920@0.511.1920.1053" timestamp="1587039669353" />
+    <state width="1897" height="275" key="GridCell.Tab.0.right" timestamp="1587039669353">
       <screen x="0" y="511" width="1920" height="1053" />
     </state>
     <state width="1897" height="275" key="GridCell.Tab.0.right/0.27.1920.1053@0.27.1920.1053" timestamp="1586251917893" />
-    <state width="1897" height="275" key="GridCell.Tab.0.right/0.511.1920.1053/1920.0.1080.1920@0.511.1920.1053" timestamp="1587038430002" />
+    <state width="1897" height="275" key="GridCell.Tab.0.right/0.511.1920.1053/1920.0.1080.1920@0.511.1920.1053" timestamp="1587039669353" />
     <state width="1897" height="340" key="GridCell.Tab.1.bottom" timestamp="1586184481107">
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
