@@ -217,7 +217,7 @@ class DataSetLoader(object):
     def __getitem__(self, idx):
         """Get an image"""
         img = Image.open(self.dataframe['ImgPath'][idx]).convert('RGB')
-
+        
         box = [[self.dataframe['XMin'][idx], self.dataframe['YMin'][idx],
                self.dataframe['XMax'][idx], self.dataframe['YMax'][idx]]]
 

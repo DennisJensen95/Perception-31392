@@ -84,4 +84,3 @@ if test_2:
 if test_3:
     """ Test trained model """
 
-    
