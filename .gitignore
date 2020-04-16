@@ -5,3 +5,6 @@ Final-Project/rcnn-test-data/Coffee cup
 Final-Project/rcnn-test-data/sub_sampled
 Final-Project/rcnn-test-data/test
 Final-Project/rcnn-test-data/train
+Final-Project/rcnn-test-data/class-description-boxable.csv
+Final-Project/rcnn-test-data/oidv6-train-annotations-bbox.csv
+Final-Project/rcnn-test-data/train-images-boxable.csv
