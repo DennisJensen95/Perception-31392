@@ -9,17 +9,20 @@ from lib.visionHelper.utils import collate_fn
 
 classesToSelect = ['Box', 'Book', 'Coffee cup']
 
-get_new_data = False
-prepare_data_set = False
+get_new_data = True
+download = False
+prepare_data_set = True
 
 getData = GetGoogleDataset(debug=False, select_classes=classesToSelect)
 
 if get_new_data:
     getData.selectClasses()
     getData.saveData()
-    getData.downloadImages()
 else:
     getData.loadData()
+
+if download:
+    getData.downloadImages()
 
 print(list(getData.train_annnotations.columns.values))
 
@@ -42,12 +45,12 @@ num_classes = len(classes_encoder) + 1
 model = getModel(num_classes)
 images, targets = next(iter(data_loader))
 images = list(image for image in images)
-targets = [{k: v for k, v in t.items()} for t in targets]
-print(targets)
-print(images)
-output = model(images, targets)   # Returns losses and detections
-
-# For inference
-model.eval()
-x = [torch.rand(3, 300, 400), torch.rand(3, 500, 400)]
-predictions = model(x)           # Returns predictions
+# targets = [{k: v for k, v in t.items()} for t in targets]
+# print(targets)
+# print(images)
+# output = model(images, targets)   # Returns losses and detections
+#
+# # For inference
+# model.eval()
+# x = [torch.rand(3, 300, 400), torch.rand(3, 500, 400)]
+# predictions = model(x)           # Returns predictions

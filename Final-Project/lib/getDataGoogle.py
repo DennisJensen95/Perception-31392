@@ -14,6 +14,7 @@ from sklearn.model_selection import train_test_split
 from PIL import Image
 import torch
 from lib.visionHelper import transforms as T
+import cv2
 
 class GetGoogleDataset(object):
 
@@ -202,8 +203,8 @@ class GetGoogleDataset(object):
                                                       'ClassName': self.classes[j]},
                                                      ignore_index=True)
 
-        train_df.to_csv(os.path.join(path_train, 'train_dataframe_2.csv'))
-        test_df.to_csv(os.path.join(path_test, 'test_dataframe_2.csv'))
+        train_df.to_csv(os.path.join(path_train, 'train_dataframe.csv'))
+        test_df.to_csv(os.path.join(path_test, 'test_dataframe.csv'))
 
 
 class DataSetLoader(object):
@@ -217,6 +218,13 @@ class DataSetLoader(object):
     def __getitem__(self, idx):
         """Get an image"""
         img = Image.open(self.dataframe['ImgPath'][idx]).convert('RGB')
+        width, height, channels = np.asarray(img).shape
+
+        print(f'width: {width}, height: {height}')
+
+        img = cv2.imread(self.dataframe['ImgPath'][idx])
+        cv2.imshow('target', img)
+        cv2.waitKey(0)
 
         box = [[self.dataframe['XMin'][idx], self.dataframe['YMin'][idx],
                self.dataframe['XMax'][idx], self.dataframe['YMax'][idx]]]
