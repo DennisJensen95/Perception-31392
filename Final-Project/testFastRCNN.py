@@ -93,19 +93,31 @@ if test_3:
     image_file = images[400]
     image = cv2.imread(image_file)
     cv2.imshow('target', image)
-    cv2.waitKey(0)
+    cv2.waitKey(1000)
 
     # Get a decoder
     classes_decoder = inv_map = {v: k for k, v in classes_encoder.items()}
 
     num_classes = len(classes_encoder) + 1
     model = getModel(num_classes)
-    # model.load_state_dict(torch.load('rcnn-test-data/trained_models/model_1/model_1_epoch_5'))
-    model = models.detection.fasterrcnn_resnet50_fpn(pretrained=True)
+    model.load_state_dict(torch.load('rcnn-test-data/trained_models/model_1/model_1_epoch_35'))
+    # model = models.detection.fasterrcnn_resnet50_fpn(pretrained=True)
     model.eval()
     img = Image.open(image_file).convert('RGB')
     img = transforms.ToTensor()(img)
     output = model([img])
 
-    print(output)
 
+    img = cv2.imread(image_file)
+    boxes = [[(i[0], i[1]), (i[2], i[3])] for i in list(output[0]['boxes'].detach().numpy())]
+    scores = output[0]['scores'].detach().numpy()
+    labels = output[0]['labels'].numpy()
+
+    for i, box in enumerate(boxes):
+        if i > 3:
+            break
+        cv2.rectangle(img, box[0], box[1], color=(0,255,0), thickness=1)
+        cv2.putText(img, f'Class: {classes_decoder[labels[i]]} score: {round(scores[i] * 100)} %', box[0],  cv2.FONT_HERSHEY_SIMPLEX, 1, (0,255,0),thickness=1)
+
+    cv2.imshow('results', img)
+    cv2.waitKey(0)

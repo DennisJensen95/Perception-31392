@@ -20,10 +20,10 @@ def main():
             os.mkdir(save_path)
 
     dataframe_train = pd.read_csv('rcnn-test-data/train/train_dataframe.csv')
-    dataframe_train = dataframe_train.iloc[:100]
+    # dataframe_train = dataframe_train.iloc[:100]
     dataset_train = DataSetLoader(dataframe_train, get_transform(True), classes_encoder)
     dataframe_test = pd.read_csv('rcnn-test-data/test/test_dataframe.csv')
-    dataframe_test = dataframe_test.iloc[:20]
+    # dataframe_test = dataframe_test.iloc[:20]
     dataset_test = DataSetLoader(dataframe_test, get_transform(False), classes_encoder)
 
     # define training and validation data loaders
