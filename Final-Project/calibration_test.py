@@ -16,5 +16,3 @@ Cal.stereoCalibration()
 
 images = images_conveyor[0]
 Cal.remapImagesStereo(images, random=False, debug=True)
-
-
