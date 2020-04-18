@@ -7,8 +7,6 @@ le = LabelEncoder()
 le.fit(['box', 'book', 'cup'])
 
 data = le.transform(['box', 'box', 'box', 'cup', 'book', 'book', 'book'])
-# print(data)
-# print(le.inverse_transform([1, 0, 0, 1, 0, 2]))
 
 debug = False
 

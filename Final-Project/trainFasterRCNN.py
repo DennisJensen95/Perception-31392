@@ -8,6 +8,7 @@ import os
 import re
 
 save_models = True
+pretrain = True
 load_model = True
 
 def main():
@@ -36,7 +37,7 @@ def main():
         collate_fn=utils.collate_fn)
 
     num_classes = len(classes_encoder) + 1
-    model = getModel(num_classes)
+    model = getModel(num_classes, pretrain)
 
     if load_model:
         files = os.listdir(save_path)
