@@ -5,6 +5,7 @@ from lib.getDataGoogle import classes_encoder
 from torchvision import transforms, models
 import torch
 import glob
+import pandas as pd
 
 test_1 = True
 
@@ -46,9 +47,7 @@ if test_1:
 
     images = sorted(glob.glob('./data/stereo_conveyor_without_occlusions/left/*.png'))
     image_file = images[400]
-    image = cv2.imread(image_file)
-    cv2.imshow('target', image)
-    cv2.waitKey(1000)
+
     our_data = np.array([x, y]).T
     books = our_data[y == 'Book'][:10]
     cups = our_data[y == 'Coffee cup'][:10]
@@ -57,15 +56,33 @@ if test_1:
     images.extend(books)
     images.extend(cups)
     images.extend(boxes)
-    print(images[0])
+
+    training_images = pd.read_csv('rcnn-test-data/train/train_dataframe.csv')
+
+    data_train = np.array([training_images['ImgPath'], training_images['ClassName']]).T
+    books_train = data_train[training_images['ClassName'] == 'Book'][:10]
+    cups_train = data_train[training_images['ClassName'] == 'Coffee cup'][:10]
+    boxes_train = data_train[training_images['ClassName'] == 'Box'][:10]
+
+    images_train = []
+    images_train.extend(books_train)
+    images_train.extend(cups_train)
+    images_train.extend(boxes_train)
+
     # Get a decoder
     classes_decoder = inv_map = {v: k for k, v in classes_encoder.items()}
 
     num_classes = len(classes_encoder) + 1
     model = getModel(num_classes)
-    model.load_state_dict(torch.load('rcnn-test-data/trained_models/model_no_pretrain/model_no_pretrain_epoch_0'))
+    model.load_state_dict(torch.load('rcnn-test-data/trained_models/model_1/model_1_epoch_99'))
     # model = models.detection.fasterrcnn_resnet50_fpn(pretrained=True)
     model.eval()
+
+    test_training_images = False
+    if test_training_images:
+        images = images_train
+
+    print(images)
 
     for i in range(len(images)):
         image_file = images[i][0]

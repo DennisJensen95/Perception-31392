@@ -9,9 +9,9 @@ from lib.visionHelper.utils import collate_fn
 
 classesToSelect = ['Box', 'Book', 'Coffee cup']
 
-get_new_data = False
+get_new_data = True
 download = False
-prepare_data_set = False
+prepare_data_set = True
 
 getData = GetGoogleDataset(debug=False, select_classes=classesToSelect)
 

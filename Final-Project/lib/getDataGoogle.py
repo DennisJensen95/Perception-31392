@@ -85,7 +85,7 @@ class GetGoogleDataset(object):
             random.shuffle(copy_object_ids)
 
             # Sub Sampling
-            sub_data_sample = copy_object_ids[:self.sub_selection_num]
+            sub_data_sample = copy_object_ids
             self.sub_sample_data.update({_class: sub_data_sample})
 
             sub_sample_img_url = [self.train_images[self.train_images['image_name'] == name + '.jpg'] for name in

@@ -139,10 +139,15 @@ class Calibration:
             print(self.images[0][0])
             img = cv2.imread(self.images[0][0])
             h, w = img.shape[:2]
+            print(self.left_camera_calibration_data[1])
+            print(self.left_camera_calibration_data[2])
+            print((h,w))
+
+
             newcameramtx_left, roi_left = cv2.getOptimalNewCameraMatrix(self.left_camera_calibration_data[1],
                                                                         self.left_camera_calibration_data[2],
                                                                         (w, h), 1, (w, h))
-
+            print(roi_left)
             dst = cv2.undistort(img,
                                 self.left_camera_calibration_data[1],
                                 self.left_camera_calibration_data[2],
@@ -155,8 +160,9 @@ class Calibration:
             ax[0].set_title('Original image')
             # crop the image
             x, y, w, h = roi_left
-            dst = dst[y:y + h, x:x + w]
-            ax[1].imshow(dst[..., [2, 1, 0]])
+            # dst = dst[y:y + h, x:x + w]
+            # print(dst.shape)
+            ax[1].imshow(dst)
             ax[1].set_title('Undistorted image')
             plt.show()
 
@@ -237,21 +243,23 @@ class Calibration:
 
         img_l = cv2.imread(image_l)
         img_l = cv2.cvtColor(img_l, cv2.COLOR_BGR2GRAY)
-        img_l_undis = cv2.undistort(img_l,
-                                    self.stereo_calibration_data[1],
-                                    self.stereo_calibration_data[2],
-                                    None,
-                                    self.optimal_camMtx1_stereo)
 
         img_r = cv2.imread(image_r)
         img_r = cv2.cvtColor(img_r, cv2.COLOR_BGR2GRAY)
-        img_r_undis = cv2.undistort(img_r,
-                                    self.stereo_calibration_data[3],
-                                    self.stereo_calibration_data[4],
-                                    None,
-                                    self.optimal_camMtx2_stereo)
 
         if debug:
+            img_l_undis = cv2.undistort(img_l,
+                                        self.stereo_calibration_data[1],
+                                        self.stereo_calibration_data[2],
+                                        None,
+                                        self.optimal_camMtx1_stereo)
+
+            img_r_undis = cv2.undistort(img_r,
+                                        self.stereo_calibration_data[3],
+                                        self.stereo_calibration_data[4],
+                                        None,
+                                        self.optimal_camMtx2_stereo)
+
             fig, ax = plt.subplots(nrows=2, ncols=2, figsize=(18, 18))
             ax[0, 0].imshow(img_l)
             ax[0, 0].set_title('Original image left')
@@ -272,6 +280,8 @@ class Calibration:
             plt.show()
 
         # remap
+        print(self.rightMapX.shape)
+        print(self.leftMapX.shape)
         imglCalRect = cv2.remap(img_l, self.leftMapX, self.leftMapY, cv2.INTER_LINEAR)
         imgrCalRect = cv2.remap(img_r, self.rightMapX, self.rightMapY, cv2.INTER_LINEAR)
 
@@ -311,6 +321,29 @@ class Calibration:
                 cv2.destroyAllWindows()
 
         return imglCalRect, imgrCalRect
+
+    def save_remapping_instance(self, dir_name):
+        """
+        Load remapping
+        :param file_name:
+        :return:
+        """
+        np.savetxt(dir_name + '/leftMapX', self.leftMapX, delimiter=',')
+        np.savetxt(dir_name + '/leftMapY', self.leftMapY, delimiter=',')
+        np.savetxt(dir_name + '/rightMapX', self.rightMapX, delimiter=',')
+        np.savetxt(dir_name + '/rightMapY', self.rightMapY, delimiter=',')
+
+    def load_remapping_instance(self, dir_name):
+        """
+        Load remapping maps
+        :param dir_name:
+        :return:
+        """
+        self.leftMapX = np.array(np.loadtxt(dir_name + '/leftMapX', delimiter=','), dtype='float32')
+        self.leftMapY = np.loadtxt(dir_name + '/leftMapY', delimiter=',', dtype='float32')
+        self.rightMapX = np.loadtxt(dir_name + '/rightMapX', delimiter=',', dtype='float32')
+        self.rightMapY = np.loadtxt(dir_name + '/rightMapY', delimiter=',', dtype='float32')
+
 
 if __name__ == '__main__':
     test_images = [["Left", "Right"], ["Left_2", "Right_2"], ["Left_3", "Right_3"]]
