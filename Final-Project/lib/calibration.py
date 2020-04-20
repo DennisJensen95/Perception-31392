@@ -136,23 +136,18 @@ class Calibration:
         if debug:
             print("Testing if distortion correction makes sense")
             # Test calibration
-            print(self.images[0][0])
             img = cv2.imread(self.images[0][0])
             h, w = img.shape[:2]
-            print(self.left_camera_calibration_data[1])
-            print(self.left_camera_calibration_data[2])
-            print((h,w))
-
-
-            newcameramtx_left, roi_left = cv2.getOptimalNewCameraMatrix(self.left_camera_calibration_data[1],
-                                                                        self.left_camera_calibration_data[2],
-                                                                        (w, h), 1, (w, h))
-            print(roi_left)
+            self.optimal_camMtx_left, roi_left = cv2.getOptimalNewCameraMatrix(self.left_camera_calibration_data[1],
+                                                                               self.left_camera_calibration_data[2],
+                                                                               (w, h),
+                                                                               1,
+                                                                               (w, h))
             dst = cv2.undistort(img,
                                 self.left_camera_calibration_data[1],
                                 self.left_camera_calibration_data[2],
                                 None,
-                                newcameramtx_left)
+                                self.optimal_camMtx_left)
 
             print(dst.shape)
             fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(18, 18))
@@ -160,9 +155,8 @@ class Calibration:
             ax[0].set_title('Original image')
             # crop the image
             x, y, w, h = roi_left
-            # dst = dst[y:y + h, x:x + w]
-            # print(dst.shape)
-            ax[1].imshow(dst)
+            dst = dst[y:y + h, x:x + w]
+            ax[1].imshow(dst[..., [2, 1, 0]])
             ax[1].set_title('Undistorted image')
             plt.show()
 
@@ -187,11 +181,21 @@ class Calibration:
                                                            self.right_camera_calibration_data[1],
                                                            self.right_camera_calibration_data[2],
                                                            self.img_shape,
-                                                           criteria =self.stereocalib_criteria,
+                                                           criteria=self.stereocalib_criteria,
                                                            flags=self.stereo_flags)
 
-        # New optimal camera matrix
 
+        self.rectification_data = cv2.stereoRectify(self.stereo_calibration_data[1],        # Camera matrix 1
+                                                    self.stereo_calibration_data[2],    # Distortion coef camera 1
+                                                    self.stereo_calibration_data[3],        # Camera matrix 2
+                                                    self.stereo_calibration_data[4],    # Distortion coef camera 2
+                                                    self.img_shape,
+                                                    self.stereo_calibration_data[5],    # Rotation matrix
+                                                    self.stereo_calibration_data[6],    # Translation vec
+                                                    None, None, None, None, None,
+                                                    alpha=0)
+
+        # New optimal camera matrix
         self.optimal_camMtx1_stereo, self.roi1_stereo  = cv2.getOptimalNewCameraMatrix(self.stereo_calibration_data[1],
                                                                           self.stereo_calibration_data[2],
                                                                           self.img_shape,
@@ -204,26 +208,16 @@ class Calibration:
                                                                           0,
                                                                           self.img_shape)
 
-        self.rectification_data = cv2.stereoRectify(self.stereo_calibration_data[1],    # Camera matrix 1
-                                                    self.stereo_calibration_data[2],    # Distortion coef camera 1
-                                                    self.stereo_calibration_data[3],    # Camera matrix 2
-                                                    self.stereo_calibration_data[4],    # Distortion coef camera 2
-                                                    self.img_shape,
-                                                    self.stereo_calibration_data[5],    # Rotation matrix
-                                                    self.stereo_calibration_data[6],    # Translation vec
-                                                    None, None, None, None, None,
-                                                    alpha=0)
-
         self.leftMapX, self.leftMapY = cv2.initUndistortRectifyMap(self.stereo_calibration_data[1],
                                                                      self.stereo_calibration_data[2],
                                                                      self.rectification_data[0],
-                                                                     self.rectification_data[2],
+                                                                     self.optimal_camMtx1_stereo,
                                                                      self.img_shape, cv2.CV_32FC1)
 
         self.rightMapX, self.rightMapY = cv2.initUndistortRectifyMap(self.stereo_calibration_data[3],
                                                                      self.stereo_calibration_data[4],
                                                                      self.rectification_data[1],
-                                                                     self.rectification_data[3],
+                                                                     self.optimal_camMtx2_stereo,
                                                                      self.img_shape, cv2.CV_32FC1)
 
     def remapImagesStereo(self, images=None, random=False, debug=False):
@@ -280,17 +274,15 @@ class Calibration:
             plt.show()
 
         # remap
-        print(self.rightMapX.shape)
-        print(self.leftMapX.shape)
         imglCalRect = cv2.remap(img_l, self.leftMapX, self.leftMapY, cv2.INTER_LINEAR)
         imgrCalRect = cv2.remap(img_r, self.rightMapX, self.rightMapY, cv2.INTER_LINEAR)
 
         if debug:
             fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(18, 18))
-            ax[0].imshow(img_l)
+            ax[0].imshow(imglCalRect)
             ax[0].set_title('Rectified image left')
             # crop the image
-            ax[1].imshow(dst)
+            ax[1].imshow(imgrCalRect)
             ax[1].set_title('Rectified image right')
             plt.show()
 
