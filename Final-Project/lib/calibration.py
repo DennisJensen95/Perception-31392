@@ -235,11 +235,11 @@ class Calibration:
             image_l = images[0]
             image_r = images[1]
 
-        img_l = cv2.imread(image_l)
-        img_l = cv2.cvtColor(img_l, cv2.COLOR_BGR2GRAY)
+        img_l_color = cv2.imread(image_l)
+        img_l = cv2.cvtColor(img_l_color, cv2.COLOR_BGR2GRAY)
 
-        img_r = cv2.imread(image_r)
-        img_r = cv2.cvtColor(img_r, cv2.COLOR_BGR2GRAY)
+        img_r_color = cv2.imread(image_r)
+        img_r = cv2.cvtColor(img_r_color, cv2.COLOR_BGR2GRAY)
 
         if debug:
             img_l_undis = cv2.undistort(img_l,
@@ -274,8 +274,8 @@ class Calibration:
             plt.show()
 
         # remap
-        imglCalRect = cv2.remap(img_l, self.leftMapX, self.leftMapY, cv2.INTER_LINEAR)
-        imgrCalRect = cv2.remap(img_r, self.rightMapX, self.rightMapY, cv2.INTER_LINEAR)
+        imglCalRect = cv2.remap(img_l_color, self.leftMapX, self.leftMapY, cv2.INTER_LINEAR)
+        imgrCalRect = cv2.remap(img_r_color, self.rightMapX, self.rightMapY, cv2.INTER_LINEAR)
 
         if debug:
             fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(18, 18))
