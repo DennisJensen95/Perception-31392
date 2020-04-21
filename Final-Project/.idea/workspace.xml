@@ -20,13 +20,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="dbe3e76b-059f-40f0-8d64-091c6d750eab" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/../.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RemappingData/leftMapX" beforeDir="false" afterPath="$PROJECT_DIR$/RemappingData/leftMapX" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RemappingData/leftMapY" beforeDir="false" afterPath="$PROJECT_DIR$/RemappingData/leftMapY" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RemappingData/rightMapX" beforeDir="false" afterPath="$PROJECT_DIR$/RemappingData/rightMapX" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RemappingData/rightMapY" beforeDir="false" afterPath="$PROJECT_DIR$/RemappingData/rightMapY" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/calibration_test.py" beforeDir="false" afterPath="$PROJECT_DIR$/calibration_test.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/calibration.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/calibration.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -65,6 +61,9 @@
       <module name="Final-Project" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
       <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/lib" />
       <option name="IS_MODULE_SDK" value="true" />
@@ -281,11 +280,6 @@
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/calibration_test.py</url>
           <option name="timeStamp" value="2" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/lib/calibration.py</url>
-          <line>154</line>
-          <option name="timeStamp" value="4" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
