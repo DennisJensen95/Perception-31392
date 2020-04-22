@@ -3,8 +3,6 @@ import cv2 as cv2
 import matplotlib.pyplot as plt
 
 
-
-
 class Calibration:
 
     def __init__(self, images, nb_vertical, nb_horizontal):
