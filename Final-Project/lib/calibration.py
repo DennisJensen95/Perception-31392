@@ -4,6 +4,7 @@ import glob
 import os
 import re
 import matplotlib.pyplot as plt
+import pickle
 
 
 class Calibration:
@@ -52,6 +53,7 @@ class Calibration:
                  cv2.CALIB_FIX_INTRINSIC | cv2.CALIB_FIX_K3 | cv2.CALIB_FIX_K4 | cv2.CALIB_FIX_K5 |
                  cv2.CALIB_FIX_K6)
 
+        self.Q = None
     def calibrateCamera(self, debug=False, fisheye=False):
         """
         :return: Saves calibration parameters inside class variable
@@ -133,6 +135,12 @@ class Calibration:
             self.left_camera_calibration_data = cv2.calibrateCamera(objpoints, imgpoints_left, img_shape, None, None)
             self.right_camera_calibration_data = cv2.calibrateCamera(objpoints, imgpoints_right, img_shape, None, None)
 
+            self.left_cam_mtx = self.left_camera_calibration_data[1]
+            self.right_cam_mtx = self.right_camera_calibration_data[1]
+
+            # print(self.left_camera_calibration_data[4])
+            # print(self.right_camera_calibration_data[4])
+
         if debug:
             print("Testing if distortion correction makes sense")
             # Test calibration
@@ -194,6 +202,10 @@ class Calibration:
                                                     self.stereo_calibration_data[6],    # Translation vec
                                                     None, None, None, None, None,
                                                     alpha=0)
+
+        self.Q = self.rectification_data[4]
+        self.T = self.stereo_calibration_data[6]
+
 
         # New optimal camera matrix
         self.optimal_camMtx1_stereo, self.roi1_stereo  = cv2.getOptimalNewCameraMatrix(self.stereo_calibration_data[1],
@@ -316,7 +328,7 @@ class Calibration:
 
     def save_remapping_instance(self, dir_name):
         """
-        Load remapping
+        Load remapping maps Deprecated
         :param file_name:
         :return:
         """
@@ -327,7 +339,7 @@ class Calibration:
 
     def load_remapping_instance(self, dir_name):
         """
-        Load remapping maps
+        Load remapping maps Deprecated
         :param dir_name:
         :return:
         """
@@ -337,6 +349,36 @@ class Calibration:
         self.rightMapY = np.loadtxt(dir_name + '/rightMapY', delimiter=',', dtype='float32')
 
 
+    def save_class(self, dir_name):
+        """
+        Save the class variables you want to save in a dictionary and dump to file with pickle
+        :param dir_name:
+        :return:
+        """
+        save_dict = {'leftMapX': self.leftMapX, 'leftMapY': self.leftMapY, 'rightMapX': self.rightMapX,
+                     'rightMapY': self.rightMapY, 'Q': self.Q, 'T': self.T, 'leftCamMtx': self.left_cam_mtx,
+                     'rightCamMtx': self.right_cam_mtx}
+
+        with open(f'{dir_name}/config.dictionary', 'wb') as config_dictionary_file:
+            pickle.dump(save_dict, config_dictionary_file)
+
+    def load_class(self, dir_name):
+        """
+        Load from picle dumped file the dictionary containing class dta
+        :param dir_name:
+        :return:
+        """
+        with open(f'{dir_name}/config.dictionary', 'rb') as config_dictionary_file:
+            config_dictionary = pickle.load(config_dictionary_file)
+
+        self.leftMapX = config_dictionary['leftMapX']
+        self.leftMapY = config_dictionary['leftMapY']
+        self.rightMapX = config_dictionary['rightMapX']
+        self.rightMapY = config_dictionary['rightMapY']
+        self.left_cam_mtx = config_dictionary['leftCamMtx']
+        self.right_cam_mtx = config_dictionary['rightCamMtx']
+        self.Q = config_dictionary['Q']
+        self.T = config_dictionary['T']
 if __name__ == '__main__':
     test_images = [["Left", "Right"], ["Left_2", "Right_2"], ["Left_3", "Right_3"]]
     Cal = Calibration(test_images, 6, 9)

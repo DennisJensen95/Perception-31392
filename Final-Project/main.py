@@ -23,9 +23,12 @@ def main():
     if calibrate:
         Cal.calibrateCamera(debug=False)
         Cal.stereoCalibration()
-        Cal.save_remapping_instance('RemappingData')
+        # Cal.save_remapping_instance('ClassDataSaved')
+        Cal.save_class('ClassDataSaved')
     else:
-        Cal.load_remapping_instance('RemappingData')
+        # Cal.load_remapping_instance('ClassDataSaved')
+        Cal.load_class('ClassDataSaved')
+
 
     images = images_conveyor[0]
 
@@ -52,7 +55,7 @@ def main():
                                    preFilterCap=preFilter,
                                    mode=mode)
 
-    images_conveyor = images_conveyor[0:-1]  # start from first box with 80:
+    images_conveyor = images_conveyor[100:101]  # start from first box with 80:
 
     for images in images_conveyor:
         left_img, right_img = Cal.remapImagesStereo(images, random=False, debug=False)
@@ -60,6 +63,8 @@ def main():
         left_img = downsample_image(left_img, 0.4)
         right_img = downsample_image(right_img, 0.4)
 
+        print(left_img.shape)
+        print(left_img[100, 100])
         if debug_disp_slider:
             slider = Slider(stereo, left_img, right_img)
             slider.create_slider()
@@ -68,13 +73,25 @@ def main():
         norm_disparity_img = cv2.normalize(disparity_img, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX,
                                            dtype=cv2.CV_32F)
 
+        # print(norm_disparity_img.shape)
+        # print(norm_disparity_img[100, 100])
+
+        Q_scaled = (Cal.Q/2)
+        Q_scaled[2, 2] = 1
+        point_cloud = return_pointcloud(norm_disparity_img, Q_scaled)
+
+        print(point_cloud.shape)
+        print(point_cloud[100, 100])
+
         cv2.imshow('Images', norm_disparity_img)
         if cv2.waitKey(10) & 0xFF == ord('q'):
             break
 
+
+
     cv2.destroyAllWindows()
 
-    # export_pointcloud(disparity_map=disparity_img, colors=left_img)
+    export_pointcloud(disparity_map=disparity_img, colors=left_img, Q=Q_scaled)
 
 
 if __name__ == '__main__':
