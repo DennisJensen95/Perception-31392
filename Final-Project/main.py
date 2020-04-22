@@ -1,9 +1,11 @@
 import glob
 import numpy as np
+# from skimage.metrics import structural_similarity as ssim
 from lib.calibration import Calibration
 from lib.construct3D import *
 import cv2
 from lib.sliderProgram import Slider
+
 
 def main():
     images_left = sorted(glob.glob("data/Stereo_calibration_images/left*.png"))
@@ -29,7 +31,7 @@ def main():
         # Cal.load_remapping_instance('ClassDataSaved')
         Cal.load_class('ClassDataSaved')
 
-
+    # extract left/right images
     images = images_conveyor[0]
 
     # Stereo Class
@@ -55,43 +57,39 @@ def main():
                                    preFilterCap=preFilter,
                                    mode=mode)
 
-    images_conveyor = images_conveyor[100:101]  # start from first box with 80:
+    images_conveyor = images_conveyor[0:-1]  # start from first box with 80:
 
-    for images in images_conveyor:
+    left_img, _ = Cal.remapImagesStereo(images_conveyor[0], random=False, debug=False)
+    reference_img = left_img  # reference image to be used for tracking
+
+    for images in images_conveyor[500:]:
         left_img, right_img = Cal.remapImagesStereo(images, random=False, debug=False)
         # images = np.concatenate((left_img, right_img), axis=1)
-        left_img = downsample_image(left_img, 0.4)
-        right_img = downsample_image(right_img, 0.4)
+        # left_img = downsample_image(left_img, 0.5)
+        # right_img = downsample_image(right_img, 0.5)
+        #
+        # if debug_disp_slider:
+        #     slider = Slider(stereo, left_img, right_img)
+        #     slider.create_slider()
+        #
+        # disparity_img = stereo.compute(left_img, right_img).astype(np.float32) / 16.0
+        # norm_disparity_img = cv2.normalize(disparity_img, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX,
+        #                                    dtype=cv2.CV_32F)
 
-        print(left_img.shape)
-        print(left_img[100, 100])
-        if debug_disp_slider:
-            slider = Slider(stereo, left_img, right_img)
-            slider.create_slider()
+        difference = cv2.subtract(left_img, reference_img)
+        diff_gray = cv2.cvtColor(difference, cv2.COLOR_BGR2GRAY)
+        _, thresh = cv2.threshold(diff_gray, 50, 255, cv2.THRESH_BINARY)
+        kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
+        mask = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, kernel, iterations=3)
+        cutout = cv2.cvtColor(left_img * mask[:, :, None], cv2.COLOR_BGR2RGB)
 
-        disparity_img = stereo.compute(left_img, right_img).astype(np.float32) / 16.0
-        norm_disparity_img = cv2.normalize(disparity_img, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX,
-                                           dtype=cv2.CV_32F)
-
-        # print(norm_disparity_img.shape)
-        # print(norm_disparity_img[100, 100])
-
-        Q_scaled = (Cal.Q/2)
-        Q_scaled[2, 2] = 1
-        point_cloud = return_pointcloud(norm_disparity_img, Q_scaled)
-
-        print(point_cloud.shape)
-        print(point_cloud[100, 100])
-
-        cv2.imshow('Images', norm_disparity_img)
+        cv2.imshow('Images', cutout)
         if cv2.waitKey(10) & 0xFF == ord('q'):
             break
 
-
-
     cv2.destroyAllWindows()
 
-    export_pointcloud(disparity_map=disparity_img, colors=left_img, Q=Q_scaled)
+    # export_pointcloud(disparity_map=disparity_img, colors=left_img, Q=Q_scaled)
 
 
 if __name__ == '__main__':
