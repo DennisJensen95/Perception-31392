@@ -4,6 +4,7 @@ from lib.calibration import Calibration
 from lib.construct3D import *
 import cv2
 from lib.sliderProgram import Slider
+import matplotlib.pyplot as plt
 
 def main():
     images_left = sorted(glob.glob("data/Stereo_calibration_images/left*.png"))
@@ -16,21 +17,18 @@ def main():
     calibrate = False
     debug_disp_slider = False
 
-
     nb_vertical = 6
     nb_horizontal = 9
     Cal = Calibration(images, nb_vertical=nb_vertical, nb_horizontal=nb_horizontal)
     if calibrate:
         Cal.calibrateCamera(debug=False)
         Cal.stereoCalibration()
-        # Cal.save_remapping_instance('ClassDataSaved')
         Cal.save_class('ClassDataSaved')
     else:
-        # Cal.load_remapping_instance('ClassDataSaved')
         Cal.load_class('ClassDataSaved')
 
-
-    images = images_conveyor[0]
+    baseline = 0.12
+    focal_length = Cal.Q[2, 3]
 
     # Stereo Class
     min_disparity = 1  # 1
@@ -62,9 +60,8 @@ def main():
         # images = np.concatenate((left_img, right_img), axis=1)
         left_img = downsample_image(left_img, 0.4)
         right_img = downsample_image(right_img, 0.4)
-
-        print(left_img.shape)
-        print(left_img[100, 100])
+        plt.imshow(left_img[110:130, 450:480])
+        plt.show()
         if debug_disp_slider:
             slider = Slider(stereo, left_img, right_img)
             slider.create_slider()
@@ -72,19 +69,13 @@ def main():
         disparity_img = stereo.compute(left_img, right_img).astype(np.float32) / 16.0
         norm_disparity_img = cv2.normalize(disparity_img, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX,
                                            dtype=cv2.CV_32F)
+        test_disp = disparity_img[110:130, 450:480]
+        Q_scaled = (Cal.Q*0.4)
+        z_map = construct_z_coordinate(test_disp, baseline, focal_length*0.4)
+        print(z_map)
 
-        # print(norm_disparity_img.shape)
-        # print(norm_disparity_img[100, 100])
-
-        Q_scaled = (Cal.Q/2)
-        Q_scaled[2, 2] = 1
-        point_cloud = return_pointcloud(norm_disparity_img, Q_scaled)
-
-        print(point_cloud.shape)
-        print(point_cloud[100, 100])
-
-        cv2.imshow('Images', norm_disparity_img)
-        if cv2.waitKey(10) & 0xFF == ord('q'):
+        cv2.imshow('Images', left_img)
+        if cv2.waitKey(0) & 0xFF == ord('q'):
             break
 
 

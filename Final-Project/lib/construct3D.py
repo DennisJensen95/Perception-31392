@@ -56,3 +56,9 @@ def export_pointcloud(disparity_map, colors, Q):
     out_fn = 'out.ply'
     write_ply('out.ply', out_points, out_colors)
     print(f'{out_fn} saved')
+
+def construct_z_coordinate(disparity_map, baseline, focal_length):
+    """"""
+    depth_map = baseline * focal_length / disparity_map
+
+    return depth_map
