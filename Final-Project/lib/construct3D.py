@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 
+
 def downsample_image(img, ratio=0.2):
     small_img = cv2.resize(img,  # original image
                            (0, 0),  # set fx and fy, not the final size
@@ -9,6 +10,7 @@ def downsample_image(img, ratio=0.2):
                            interpolation=cv2.INTER_NEAREST)
 
     return small_img
+
 
 def return_pointcloud(disparity_map, Q):
     h, w = disparity_map.shape[:2]
@@ -19,6 +21,7 @@ def return_pointcloud(disparity_map, Q):
     #                 [0, 0, 1, 0]])
     points = cv2.reprojectImageTo3D(disparity_map, Q)
     return points
+
 
 def export_pointcloud(disparity_map, colors, Q):
     ply_header = '''ply
@@ -56,3 +59,10 @@ def export_pointcloud(disparity_map, colors, Q):
     out_fn = 'out.ply'
     write_ply('out.ply', out_points, out_colors)
     print(f'{out_fn} saved')
+
+
+def construct_z_coordinate(disparity_map, baseline, focal_length):
+    """"""
+    depth_map = baseline * focal_length / disparity_map
+
+    return depth_map
