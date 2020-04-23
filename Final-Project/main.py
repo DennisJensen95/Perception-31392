@@ -59,12 +59,15 @@ def main():
                                    preFilterCap=preFilter,
                                    mode=mode)
 
+    fgbg = cv2.createBackgroundSubtractorKNN(history=500, dist2Threshold=500, detectShadows=False)  # object for background subtraction
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
+
     images_conveyor = images_conveyor[0:-1]  # start from first box with 80:
 
-    left_img, _ = Cal.remapImagesStereo(images_conveyor[0], random=False, debug=False)
-    reference_img = cv2.GaussianBlur(left_img, (11, 11), 0)  # reference image to be used for tracking
+    # left_img, _ = Cal.remapImagesStereo(images_conveyor[0], random=False, debug=False)
+    # reference_img = cv2.GaussianBlur(left_img, (11, 11), 0)  # reference image to be used for tracking
 
-    for images in images_conveyor[350:]:
+    for images in images_conveyor[0:]:
         left_img, right_img = Cal.remapImagesStereo(images, random=False, debug=False)
         # images = np.concatenate((left_img, right_img), axis=1)
         # left_img = downsample_image(left_img, 0.5)
@@ -78,15 +81,20 @@ def main():
         # norm_disparity_img = cv2.normalize(disparity_img, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX,
         #                                    dtype=cv2.CV_32F)
 
-        left_img_blurred = cv2.GaussianBlur(left_img, (23, 23), 0)
-        difference = cv2.absdiff(left_img_blurred, reference_img)
-        # diff_gray = cv2.cvtColor(difference, cv2.COLOR_BGR2GRAY)
-        _, thresh = cv2.threshold(difference, 50, 255, cv2.THRESH_BINARY)
-        thresh_gray = cv2.cvtColor(thresh, cv2.COLOR_BGR2GRAY)
+        # left_img_blurred = cv2.GaussianBlur(left_img, (11, 11), 0)
+        # mask = fgbg.apply(left_img_blurred)
 
-        kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
-        mask = cv2.morphologyEx(thresh_gray, cv2.MORPH_OPEN, kernel, iterations=3)
-        mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel, iterations=3)
+        mask = fgbg.apply(left_img)
+
+
+
+        # difference = cv2.absdiff(left_img_blurred, reference_img)
+        # diff_gray = cv2.cvtColor(difference, cv2.COLOR_BGR2GRAY)
+        # _, thresh = cv2.threshold(difference, 50, 255, cv2.THRESH_BINARY)
+        # thresh_gray = cv2.cvtColor(thresh, cv2.COLOR_BGR2GRAY)
+        #
+        mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel, iterations=3)
+        mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel, iterations=5)
         # cutout = cv2.cvtColor(left_img * mask[:, :, None], cv2.COLOR_BGR2RGB)
         contours = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         contours = np.asarray(imutils.grab_contours(contours))
