@@ -5,6 +5,7 @@ import imutils
 from lib.calibration import Calibration
 from lib.construct3D import *
 from lib.tracking import *
+from lib.kalman3d import *
 import cv2
 from lib.sliderProgram import Slider
 
