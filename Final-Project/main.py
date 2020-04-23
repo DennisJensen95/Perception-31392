@@ -1,5 +1,6 @@
 import glob
 import numpy as np
+import imutils
 # from skimage.metrics import structural_similarity as ssim
 from lib.calibration import Calibration
 from lib.construct3D import *
@@ -62,7 +63,7 @@ def main():
     left_img, _ = Cal.remapImagesStereo(images_conveyor[0], random=False, debug=False)
     reference_img = left_img  # reference image to be used for tracking
 
-    for images in images_conveyor[500:]:
+    for images in images_conveyor[150:]:
         left_img, right_img = Cal.remapImagesStereo(images, random=False, debug=False)
         # images = np.concatenate((left_img, right_img), axis=1)
         # left_img = downsample_image(left_img, 0.5)
@@ -76,14 +77,24 @@ def main():
         # norm_disparity_img = cv2.normalize(disparity_img, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX,
         #                                    dtype=cv2.CV_32F)
 
-        difference = cv2.subtract(left_img, reference_img)
-        diff_gray = cv2.cvtColor(difference, cv2.COLOR_BGR2GRAY)
-        _, thresh = cv2.threshold(diff_gray, 50, 255, cv2.THRESH_BINARY)
-        kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
-        mask = cv2.morphologyEx(thresh, cv2.MORPH_OPEN, kernel, iterations=3)
-        cutout = cv2.cvtColor(left_img * mask[:, :, None], cv2.COLOR_BGR2RGB)
 
-        cv2.imshow('Images', cutout)
+        difference = cv2.absdiff(left_img, reference_img)
+        # diff_gray = cv2.cvtColor(difference, cv2.COLOR_BGR2GRAY)
+        _, thresh = cv2.threshold(difference, 50, 255, cv2.THRESH_BINARY)
+        thresh_gray = cv2.cvtColor(thresh, cv2.COLOR_BGR2GRAY)
+
+        kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
+        mask = cv2.morphologyEx(thresh_gray, cv2.MORPH_OPEN, kernel, iterations=3)
+        # cutout = cv2.cvtColor(left_img * mask[:, :, None], cv2.COLOR_BGR2RGB)
+        contours = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        contours = imutils.grab_contours(contours)
+        cv2.drawContours(left_img, contours, -1, (0,255,0), 3)
+
+
+
+
+
+        cv2.imshow('Images', left_img)
         if cv2.waitKey(10) & 0xFF == ord('q'):
             break
 
