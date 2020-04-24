@@ -34,6 +34,8 @@ def main():
     else:
         Cal.load_class('ClassDataSaved')
 
+    Kal = KalmanFilter()
+
     baseline = 0.12
     focal_length = Cal.Q[2, 3]
 
@@ -65,18 +67,20 @@ def main():
     objects_to_detect = ['cup', 'book']
     down_sample_ratio = 0.4
 
-    ref_image_left = Cal.remapImagesStereo(images_conveyor[0], random=False, debug=False)[0]
-    ref_image_left = downsample_image(ref_image_left, down_sample_ratio)
-    # cv2.imshow('ref img', ref_image_left)
-    # cv2.waitKey(0)
-    images_conveyor = images_conveyor[800:1300]  # start from first box with 80:
+    fgbg = cv2.createBackgroundSubtractorKNN(history=500, dist2Threshold=500, detectShadows=False)
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
 
-    for images in images_conveyor:
+    images_conveyor = images_conveyor[0:-1]  # start from first box with 80:
+    last_centroid = [0, 0]
+    for images in images_conveyor[0:]:
         left_img, right_img = Cal.remapImagesStereo(images, random=False, debug=False)
         # images = np.concatenate((left_img, right_img), axis=1)
 
         left_img = downsample_image(left_img, down_sample_ratio)
         right_img = downsample_image(right_img, down_sample_ratio)
+
+        # plt.imshow(left_img[80:-1, 100:-1])
+        # plt.show()
 
         if debug_disp_slider:
             slider = Slider(stereo, left_img, right_img)
@@ -84,31 +88,53 @@ def main():
 
         disparity_img = stereo.compute(left_img, right_img).astype(np.float32) / 16.0
         # norm_disparity_img = cv2.normalize(disparity_img, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX,
-        #                                    dtype=cv2.CV_32F)
+        #                                    dtype=cv2.CV_32F
 
-        if preTrainedFastRcnn:
-            img_fastRCNN = object_detection_api(left_img, objects_to_detect, threshold=0.8)
+        mask = fgbg.apply(left_img)
 
-        difference = cv2.absdiff(left_img, ref_image_left)
-        _, thresh = cv2.threshold(difference, 50, 255, cv2.THRESH_BINARY)
-        thresh_gray = cv2.cvtColor(thresh, cv2.COLOR_BGR2GRAY)
-
-        kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5,5))
-        mask = cv2.morphologyEx(thresh_gray, cv2.MORPH_OPEN, kernel, iterations=3)
+        mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel, iterations=3)
+        mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel, iterations=5)
 
         contours = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         contours = np.asarray(imutils.grab_contours(contours))
-        cv2.drawContours(left_img, contours, -1, (0, 255, 0), 3)
+        # cv2.drawContours(left_img, contours, -1, (0, 255, 0), 3)
+
         if len(contours) > 0:
             centroid = calculate_centroid(contours)
-            cv2.circle(left_img, centroid, radius=4, color=(255, 0, 0), thickness=5)
+            assert(disparity_img.shape[:2] == left_img.shape[:2]), f'Disparity img shape: {disparity_img.shape[:2]}, ' \
+                                                           f'Left img shape: {left_img.shape[:2]}'
 
-        # test_disp = disparity_img[110:130, 450:480]
-        # Q_scaled = (Cal.Q*0.4)
-        # z_map = construct_z_coordinate(test_disp, baseline, focal_length*down_sample_ratio)
+            if centroid:
+                """Kalman predict and update"""
+                cx, cy = centroid
+                left_img = Kal.plot_pos(contours[-1], centroid, left_img, pred=False)
+
+                z_coor = construct_z_coordinate(disparity_img[cy, cx], baseline, focal_length * down_sample_ratio)
+
+                pos_string = f'(x, y, z) = ({centroid[0]},{centroid[1]},{z_coor})'
+                print(pos_string)
+                centroid_pos = [centroid[0], centroid[1], z_coor]
+
+                if np.abs(last_centroid[0]-centroid[0]) > 125:
+                    print(f'Reset kalman filter')
+                    Kal.reset_kalman()
+
+                centroid_pred = Kal.kalman(centroid_pos, update=True)
+
+                left_img = Kal.plot_pos(contours[-1], centroid_pred, left_img, pred=True)
+
+                last_centroid = centroid
+            else:
+                """Kalman Predict"""
+                centroid_pred = Kal.kalman(update=False)
+                left_img = Kal.plot_pos(contours[-1], centroid_pred, left_img, pred=True)
+
+        if preTrainedFastRcnn:
+            left_img = left_img[80:-1, 100:-1]
+            img_fastRCNN = object_detection_api(left_img, objects_to_detect, threshold=0.8)
 
         cv2.imshow('Images', left_img)
-        if cv2.waitKey(10) & 0xFF == ord('q'):
+        if cv2.waitKey(5) & 0xFF == ord('q'):
             break
 
     cv2.destroyAllWindows()
