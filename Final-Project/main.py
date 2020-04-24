@@ -119,10 +119,14 @@ def main():
 
             cz = z_map[cx, cy]
 
+            kx, ky, kz = kalman(cx, cy, cz)
+
             pos_string = '(x,y,z) = ({}, {}, {})'.format(cx, cy, cz)
+            kal_string = '(x,y,z) = ({}, {}, {})'.format(kx[0], ky[0], kz[0])
 
             # cv2.rectangle(left_img, (10, 2), (350, 20), (255, 255, 255), -1)
             cv2.putText(left_img, pos_string, (15, 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0))
+            cv2.putText(left_img, kal_string, (15, 40), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0))
 
         cv2.imshow('Images', left_img)
         if cv2.waitKey(10) & 0xFF == ord('q'):
