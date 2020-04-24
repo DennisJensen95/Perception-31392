@@ -58,7 +58,7 @@ class KalmanFilter:
                            [0]])
 
         # The transition matrix (9x9).
-        delta_t = 1 / 2
+        delta_t = 0.1
         self.F = np.array([[1, 0, 0, delta_t, 0, 0, 1 / 2 * delta_t ** 2, 0, 0],
                            [0, 1, 0, 0, delta_t, 0, 0, 1 / 2 * delta_t ** 2, 0],
                            [0, 0, 1, 0, 0, delta_t, 0, 0, 1 / 2 * delta_t ** 2],
@@ -120,7 +120,6 @@ class KalmanFilter:
 
     def kalman(self, centroid=None, update=True):
 
-
         if update:
             centroid = np.array([[centroid[0]], [centroid[1]], [centroid[2]]])
             self.x_pred, self.P_pred = self.predict(self.x, self.P)
@@ -144,13 +143,13 @@ class KalmanFilter:
         if not pred:
             cx, cy = centroid
             (x, y, w, h) = cv2.boundingRect(contour)
-            cv2.rectangle(img, (x, y), (x + w, y + h), (255, 0, 0), 3)
-            cv2.circle(img, (cx, cy), radius=4, color=(255, 0, 0), thickness=5)
+            cv2.rectangle(img, (x, y), (x + w, y + h), (0, 0, 255), 3)
+            cv2.circle(img, (cx, cy), radius=4, color=(0, 0, 255), thickness=5)
         else:
             cx, cy, z = centroid
             cx, cy = int(cx), int(cy)
             (x, y, w, h) = cv2.boundingRect(contour)
-            cv2.rectangle(img, (cx - int(w/2), cy - int(h/2)), (cx + int(w/2), cy + int(h/2)), (0, 0, 255), 3)
-            cv2.circle(img, (cx, cy), radius=4, color=(0, 0, 255), thickness=5)
+            cv2.rectangle(img, (cx - int(w/2), cy - int(h/2)), (cx + int(w/2), cy + int(h/2)), (255, 0, 0), 3)
+            cv2.circle(img, (cx, cy), radius=4, color=(255, 0, 0), thickness=5)
 
         return img

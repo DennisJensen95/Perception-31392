@@ -87,19 +87,22 @@ def main():
             slider = Slider(stereo, left_img, right_img)
             slider.create_slider()
 
+        # Compute disparity image
         disparity_img = stereo.compute(left_img, right_img).astype(np.float32) / 16.0
-        # norm_disparity_img = cv2.normalize(disparity_img, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX,
 
-
+        # Apply background subtraction
         mask = fgbg.apply(left_img)
 
+        # Open and close mask to remove noise
         mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel, iterations=3)
         mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel, iterations=5)
 
+        # Calculate contours
         contours = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         contours = np.asarray(imutils.grab_contours(contours))
         # cv2.drawContours(left_img, contours, -1, (0, 255, 0), 3)
 
+        # Do calculation if an object was found
         if len(contours) > 0:
             centroid = calculate_centroid(contours)
             assert(disparity_img.shape[:2] == left_img.shape[:2]), f'Disparity img shape: {disparity_img.shape[:2]}, ' \
@@ -107,29 +110,44 @@ def main():
 
             if centroid:
                 """Kalman predict and update"""
+                # extract centroid x,y
                 cx, cy = centroid
+
+                # plot measurement on image
                 left_img = Kal.plot_pos(contours[-1], centroid, left_img, pred=False)
 
-                z_coor = construct_z_coordinate(disparity_img[cy, cx], baseline, focal_length * down_sample_ratio)
+                # find Z-coordinate from disparity image
+                cz = construct_z_coordinate(disparity_img[cy, cx], baseline, focal_length * down_sample_ratio)
 
-                pos_string = f'(x, y, z) = ({centroid[0]},{centroid[1]},{z_coor})'
-                cv2.putText(left_img, pos_string, (15, 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0))
-                # cv2.putText(left_img, kal_string, (15, 40), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0))
-                centroid_pos = [centroid[0], centroid[1], z_coor]
+                # append to centroid list
+                centroid_pos = [centroid[0], centroid[1], cz]
 
+                # if a drastic change is detected, it must be a new object detected
                 if np.abs(last_centroid[0]-centroid[0]) > 125:
                     print(f'Reset kalman filter')
                     Kal.reset_kalman()
 
                 centroid_pred = Kal.kalman(centroid_pos, update=True)
 
+                # plot kalman prediction on image
                 left_img = Kal.plot_pos(contours[-1], centroid_pred, left_img, pred=True)
 
+                # update last centroid
                 last_centroid = centroid
+
+                # Display text on screen
+                measurement_string = f'Measurement: (x, y, z) = ({centroid[0]},{centroid[1]},{cz:.2f})'
+                cv2.putText(left_img, measurement_string, (15, 15), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 255))
+                prediction_string = f'Prediction: (x, y, z) = ({centroid_pred[0][0]:.2f},{centroid_pred[1][0]:.2f},{centroid_pred[2][0]:.2f})'
+                cv2.putText(left_img, prediction_string, (15, 35), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 0, 0))
             else:
                 """Kalman Predict"""
                 centroid_pred = Kal.kalman(update=False)
                 left_img = Kal.plot_pos(contours[-1], centroid_pred, left_img, pred=True)
+
+                # Display on screen
+                prediction_string = f'Prediction: (x, y, z) = ({centroid_pred[0][0]:.2f},{centroid_pred[1][0]:.2f},{centroid_pred[2][0]:.2f})'
+                cv2.putText(left_img, prediction_string, (15, 15), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 0, 0))
 
 
         cv2.imshow('Images', left_img)
