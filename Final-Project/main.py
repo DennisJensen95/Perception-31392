@@ -8,6 +8,8 @@ from lib.tracking import *
 from lib.kalman3d import *
 import cv2
 from lib.sliderProgram import Slider
+import matplotlib.pyplot as plt
+import imutils
 
 
 def main():
@@ -21,26 +23,15 @@ def main():
     calibrate = False
     debug_disp_slider = False
 
-
     nb_vertical = 6
     nb_horizontal = 9
     Cal = Calibration(images, nb_vertical=nb_vertical, nb_horizontal=nb_horizontal)
     if calibrate:
         Cal.calibrateCamera(debug=False)
         Cal.stereoCalibration()
-        # Cal.save_remapping_instance('ClassDataSaved')
         Cal.save_class('ClassDataSaved')
     else:
-        # Cal.load_remapping_instance('ClassDataSaved')
         Cal.load_class('ClassDataSaved')
-
-    # extract left/right images
-    images = images_conveyor[0]
-
-    baseline = 0.12
-    focal_length = Cal.Q[2, 3]
-
-    down_sample_ratio = 0.4
 
     # Stereo Class
     min_disparity = 1  # 1
@@ -65,6 +56,10 @@ def main():
                                    preFilterCap=preFilter,
                                    mode=mode)
 
+    baseline = 0.12
+    focal_length = Cal.Q[2, 3]
+    down_sample_ratio = 0.4
+
     # object for background subtraction
     fgbg = cv2.createBackgroundSubtractorKNN(history=500, dist2Threshold=500, detectShadows=False)
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
@@ -77,6 +72,7 @@ def main():
     for images in images_conveyor[0:]:
         left_img, right_img = Cal.remapImagesStereo(images, random=False, debug=False)
         # images = np.concatenate((left_img, right_img), axis=1)
+
         left_img = downsample_image(left_img, down_sample_ratio)
         right_img = downsample_image(right_img, down_sample_ratio)
 
@@ -87,6 +83,7 @@ def main():
         disparity_img = stereo.compute(left_img, right_img).astype(np.float32) / 16.0
         # norm_disparity_img = cv2.normalize(disparity_img, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX,
         #                                    dtype=cv2.CV_32F)
+
 
         # left_img_blurred = cv2.GaussianBlur(left_img, (11, 11), 0)
         # mask = fgbg.apply(left_img_blurred)
@@ -103,10 +100,10 @@ def main():
         mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel, iterations=3)
         mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel, iterations=5)
         # cutout = cv2.cvtColor(left_img * mask[:, :, None], cv2.COLOR_BGR2RGB)
+
         contours = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         contours = np.asarray(imutils.grab_contours(contours))
         cv2.drawContours(left_img, contours, -1, (0, 255, 0), 3)
-
         if len(contours) > 0:
             cx, cy = calculate_centroid(contours)
             cv2.circle(left_img, (cx, cy), 6, (255, 0, 0), -1)

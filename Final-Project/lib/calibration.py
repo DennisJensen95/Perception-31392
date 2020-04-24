@@ -6,7 +6,6 @@ import re
 import matplotlib.pyplot as plt
 import pickle
 
-
 class Calibration:
 
     def __init__(self, images, nb_vertical, nb_horizontal):
@@ -54,6 +53,7 @@ class Calibration:
                  cv2.CALIB_FIX_K6)
 
         self.Q = None
+
     def calibrateCamera(self, debug=False, fisheye=False):
         """
         :return: Saves calibration parameters inside class variable
@@ -135,11 +135,7 @@ class Calibration:
             self.left_camera_calibration_data = cv2.calibrateCamera(objpoints, imgpoints_left, img_shape, None, None)
             self.right_camera_calibration_data = cv2.calibrateCamera(objpoints, imgpoints_right, img_shape, None, None)
 
-            self.left_cam_mtx = self.left_camera_calibration_data[1]
-            self.right_cam_mtx = self.right_camera_calibration_data[1]
-
-            # print(self.left_camera_calibration_data[4])
-            # print(self.right_camera_calibration_data[4])
+            self.objpoints = objpoints
 
         if debug:
             print("Testing if distortion correction makes sense")
@@ -205,6 +201,7 @@ class Calibration:
 
         self.Q = self.rectification_data[4]
         self.T = self.stereo_calibration_data[6]
+        self.R = self.stereo_calibration_data[5]
 
 
         # New optimal camera matrix
@@ -326,6 +323,14 @@ class Calibration:
 
         return imglCalRect, imgrCalRect
 
+    # def calculate_re_projection_error(self):
+    #     mean_error = 0
+    #     for i in range(len(self.objpoints)):
+    #         imgpoints2, _ = cv2.projectPoints(self.objpoints[i], rvecs[i], tvecs[i], mtx, dist)
+    #         error = cv.norm(imgpoints[i], imgpoints2, cv.NORM_L2) / len(imgpoints2)
+    #         mean_error += error
+    #     print("total error: {}".format(mean_error / len(objpoints)))
+
     def save_remapping_instance(self, dir_name):
         """
         Load remapping maps Deprecated
@@ -356,15 +361,15 @@ class Calibration:
         :return:
         """
         save_dict = {'leftMapX': self.leftMapX, 'leftMapY': self.leftMapY, 'rightMapX': self.rightMapX,
-                     'rightMapY': self.rightMapY, 'Q': self.Q, 'T': self.T, 'leftCamMtx': self.left_cam_mtx,
-                     'rightCamMtx': self.right_cam_mtx}
+                     'rightMapY': self.rightMapY, 'Q': self.Q, 'T': self.T, 'leftCamCalData': self.left_camera_calibration_data,
+                     'rightCamCalData': self.right_camera_calibration_data, 'R': self.R}
 
         with open(f'{dir_name}/config.dictionary', 'wb') as config_dictionary_file:
             pickle.dump(save_dict, config_dictionary_file)
 
     def load_class(self, dir_name):
         """
-        Load from picle dumped file the dictionary containing class dta
+        Load from pickle dumped file the dictionary containing class dta
         :param dir_name:
         :return:
         """
@@ -375,10 +380,12 @@ class Calibration:
         self.leftMapY = config_dictionary['leftMapY']
         self.rightMapX = config_dictionary['rightMapX']
         self.rightMapY = config_dictionary['rightMapY']
-        self.left_cam_mtx = config_dictionary['leftCamMtx']
-        self.right_cam_mtx = config_dictionary['rightCamMtx']
+        self.left_camera_calibration_data = config_dictionary['leftCamCalData']
+        self.right_camera_calibration_data = config_dictionary['rightCamCalData']
         self.Q = config_dictionary['Q']
         self.T = config_dictionary['T']
+        self.R = config_dictionary['R']
+
 if __name__ == '__main__':
     test_images = [["Left", "Right"], ["Left_2", "Right_2"], ["Left_3", "Right_3"]]
     Cal = Calibration(test_images, 6, 9)

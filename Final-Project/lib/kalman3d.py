@@ -78,19 +78,3 @@ def kalman(x, y, z):
     center_pred = (x_pred[0], x_pred[1], x_pred[2])
     
     return center_pred
-    
-    
-
-
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
