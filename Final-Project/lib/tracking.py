@@ -30,6 +30,9 @@ KALMAN FILTER
 class KalmanFilter:
     def __init__(self):
         # The initial state (9x1).
+        self.state_num = 9
+        self.meausure_num = 3
+        self.kal = cv2.KalmanFilter(self.state_num, self.meausure_num)
         self.reset_kalman()
 
     def reset_kalman(self):
@@ -41,10 +44,10 @@ class KalmanFilter:
                            [0],
                            [0],
                            [0],
-                           [0]])
+                           [0]], np.float32)
 
         # The initial uncertainty (9x9).
-        self.P = np.eye(9) * 1000
+        self.P = np.eye(9) * 100
 
         # The external motion (9x1).
         self.u = np.array([[0],
@@ -55,10 +58,10 @@ class KalmanFilter:
                            [0],
                            [0],
                            [0],
-                           [0]])
+                           [0]], np.float32)
 
         # The transition matrix (9x9).
-        delta_t = 1 / 2
+        delta_t = 0.1
         self.F = np.array([[1, 0, 0, delta_t, 0, 0, 1 / 2 * delta_t ** 2, 0, 0],
                            [0, 1, 0, 0, delta_t, 0, 0, 1 / 2 * delta_t ** 2, 0],
                            [0, 0, 1, 0, 0, delta_t, 0, 0, 1 / 2 * delta_t ** 2],
@@ -67,12 +70,12 @@ class KalmanFilter:
                            [0, 0, 0, 0, 0, 1, 0, 0, delta_t],
                            [0, 0, 0, 0, 0, 0, 1, 0, 0],
                            [0, 0, 0, 0, 0, 0, 0, 1, 0],
-                           [0, 0, 0, 0, 0, 0, 0, 0, 1]])
+                           [0, 0, 0, 0, 0, 0, 0, 0, 1]], np.float32)
 
         # The observation matrix (3x9).
         self.H = np.array([[1, 0, 0, 0, 0, 0, 0, 0, 0],
                            [0, 1, 0, 0, 0, 0, 0, 0, 0],
-                           [0, 0, 1, 0, 0, 0, 0, 0, 0]])
+                           [0, 0, 1, 0, 0, 0, 0, 0, 0]], np.float32)
 
         # The measurement uncertainty
         self.R = 1
@@ -84,6 +87,16 @@ class KalmanFilter:
         self.P_pred = None
         self.x_update = None
         self.P_update = None
+
+
+        self.kal.processNoiseCov = np.identity(
+            self.state_num, np.float32) * 1e-5
+        self.kal.measurementNoiseCov = np.identity(
+            self.meausure_num, np.float32) * 1e-2
+        self.kal.errorCovPost = np.identity(
+            self.state_num, np.float32)
+        self.kal.transitionMatrix = self.F
+        self.kal.measurementMatrix = self.H
 
     def update(self, x, P, Z):
         """
@@ -112,24 +125,19 @@ class KalmanFilter:
         :param u: External motion
         :return: predicted state vector, predicted uncertainty matrix
         """
-        print(P.shape)
         x_pred = self.F @ x + self.u
         P_pred = self.F @ P @ np.transpose(self.F)
 
         return x_pred, P_pred
 
     def kalman(self, centroid=None, update=True):
-
-
         if update:
-            centroid = np.array([[centroid[0]], [centroid[1]], [centroid[2]]])
+            centroid = np.array([[centroid[0, 0]], [centroid[0, 1]], [centroid[0, 2]]])
             self.x_pred, self.P_pred = self.predict(self.x, self.P)
             self.x_update, self.P_update = self.update(self.x_pred, self.P_pred, centroid)
             self.x, self.P = self.x_update, self.P_update
             # Prediction
             center_pred = (self.x_pred[0], self.x_pred[1], self.x_pred[2])
-
-            return center_pred
         else:
             # Predict
             self.x_pred, self.P_pred = self.predict(self.x, self.P)
@@ -138,20 +146,34 @@ class KalmanFilter:
             # Save prediction
             center_pred = (self.x_pred[0], self.x_pred[1], self.x_pred[2])
 
-            return center_pred
+        return center_pred
+
+    def kalman_cv2(self, centroid=None, update=True):
+        if update:
+            self.x_pred = self.kal.predict()
+            self.kal.correct(centroid)
+            # Prediction
+            center_pred = (self.x_pred[0], self.x_pred[1], self.x_pred[2])
+        else:
+            # Predict
+            self.x_pred = self.kal.predict()
+            # Save prediction
+            center_pred = (self.x_pred[0], self.x_pred[1], self.x_pred[2])
+
+        return center_pred
 
     def plot_pos(self, contour, centroid, img, pred=False):
         if not pred:
             cx, cy = centroid
             (x, y, w, h) = cv2.boundingRect(contour)
-            cv2.rectangle(img, (x, y), (x + w, y + h), (255, 0, 0), 3)
-            cv2.circle(img, (cx, cy), radius=4, color=(255, 0, 0), thickness=5)
+            cv2.rectangle(img, (x, y), (x + w, y + h), (0, 0, 255), 3)
+            cv2.circle(img, (cx, cy), radius=4, color=(0, 0, 255), thickness=5)
         else:
             cx, cy, z = centroid
             cx, cy = int(cx), int(cy)
             (x, y, w, h) = cv2.boundingRect(contour)
-            cv2.rectangle(img, (cx - int(w/2), cy - int(h/2)), (cx + int(w/2), cy + int(h/2)), (0, 0, 255), 3)
-            cv2.circle(img, (cx, cy), radius=4, color=(0, 0, 255), thickness=5)
+            cv2.rectangle(img, (cx - int(w/2), cy - int(h/2)), (cx + int(w/2), cy + int(h/2)), (255, 0, 0), 3)
+            cv2.circle(img, (cx, cy), radius=4, color=(255, 0, 0), thickness=5)
 
         return img
 
