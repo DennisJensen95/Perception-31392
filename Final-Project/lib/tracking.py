@@ -5,37 +5,24 @@ import imutils
 from numpy.linalg import inv, pinv
 
 
-"""
-FEATURE TRACKING
-"""
-
-
-def calculate_centroid(contours):
-    cnt = contours[-1]
-    M = cv2.moments(cnt)
-    try:
-        cx = int(M['m10'] / M['m00'])
-        cy = int(M['m01'] / M['m00'])
-    except ZeroDivisionError as e:
-        print(e)
-        return False
-
-    return cx, cy
-
-"""
-KALMAN FILTER
-"""
-
-
-class KalmanFilter:
-    def __init__(self):
+class Tracking:
+    def __init__(self, running_mean_num=3):
         # The initial state (9x1).
         self.state_num = 9
         self.meausure_num = 3
         self.kal = cv2.KalmanFilter(self.state_num, self.meausure_num)
+
+        self.biggest_area = 0
+        self.area = 0
+
+        self.centroids_x_y = []
+        self.running_mean_num = running_mean_num
+
         self.reset_kalman()
 
     def reset_kalman(self):
+        self.biggest_area = 0
+
         self.x = np.array([[0],
                            [0],
                            [0],
@@ -177,5 +164,34 @@ class KalmanFilter:
 
         return img
 
+    def get_area_of_box(self, contour):
+        (x, y, w, h) = cv2.boundingRect(contour)
+        return w*h
+
+    def check_area_to_small(self, contour, threshold):
+        self.area = self.get_area_of_box(contour)
+
+        if self.area > self.biggest_area:
+            self.biggest_area = self.area
+            return False
+        elif self.area < self.biggest_area * threshold:
+            return True
 
 
+    def running_mean_centroid(self):
+        centroid_pos_x_y = np.mean(np.asarray(self.centroids_x_y), axis=0).astype(int)
+        return centroid_pos_x_y
+
+    def calculate_centroid(self, contours):
+        cnt = contours[-1]
+        M = cv2.moments(cnt)
+        try:
+            cx = int(M['m10'] / M['m00'])
+            cy = int(M['m01'] / M['m00'])
+        except ZeroDivisionError as e:
+            print(e)
+            return False
+        centroid = [cx, cy]
+        self.centroids_x_y.insert(0, centroid)
+        self.centroids_x_y = self.centroids_x_y[:self.running_mean_num]
+        return cx, cy
