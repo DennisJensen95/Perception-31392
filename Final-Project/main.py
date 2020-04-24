@@ -115,9 +115,8 @@ def main():
             # print('(x, y) = ({}, {})\t (w, h) = ({}, {})'.format(cx, cy, w, h))
 
             # # Q_scaled = (Cal.Q*0.4)
-            z_map = construct_z_coordinate(disparity_img, baseline, focal_length * down_sample_ratio)
+            cz = construct_z_coordinate(disparity_img[cy, cx], baseline, focal_length * down_sample_ratio)
 
-            cz = z_map[cy, cx]
 
             kx, ky, kz = kalman(cx, cy, cz)
 
