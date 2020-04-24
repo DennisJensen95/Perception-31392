@@ -109,7 +109,7 @@ def main():
 
         if len(contours) > 0:
             cx, cy = calculate_centroid(contours)
-            cv2.circle(left_img, (cy, cx), 6, (255, 0, 0), -1)
+            cv2.circle(left_img, (cx, cy), 6, (255, 0, 0), -1)
 
             # w, h = disparity_img.shape
             # print('(x, y) = ({}, {})\t (w, h) = ({}, {})'.format(cx, cy, w, h))
@@ -117,7 +117,7 @@ def main():
             # # Q_scaled = (Cal.Q*0.4)
             z_map = construct_z_coordinate(disparity_img, baseline, focal_length * down_sample_ratio)
 
-            cz = z_map[cx, cy]
+            cz = z_map[cy, cx]
 
             kx, ky, kz = kalman(cx, cy, cz)
 
