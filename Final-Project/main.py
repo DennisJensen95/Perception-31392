@@ -33,6 +33,13 @@ def main():
     else:
         Cal.load_class('ClassDataSaved')
 
+    Kal = KalmanFilter()
+    last_centroid = [0, 0]
+
+    baseline = 0.12
+    focal_length = Cal.Q[2, 3]
+    down_sample_ratio = 0.4
+
     # Stereo Class
     min_disparity = 1  # 1
     num_disparity = 75  # 160
@@ -56,9 +63,6 @@ def main():
                                    preFilterCap=preFilter,
                                    mode=mode)
 
-    baseline = 0.12
-    focal_length = Cal.Q[2, 3]
-    down_sample_ratio = 0.4
 
     # object for background subtraction
     fgbg = cv2.createBackgroundSubtractorKNN(history=500, dist2Threshold=500, detectShadows=False)
@@ -76,56 +80,60 @@ def main():
         left_img = downsample_image(left_img, down_sample_ratio)
         right_img = downsample_image(right_img, down_sample_ratio)
 
+        # plt.imshow(left_img[80:-1, 100:-1])
+        # plt.show()
+
         if debug_disp_slider:
             slider = Slider(stereo, left_img, right_img)
             slider.create_slider()
 
         disparity_img = stereo.compute(left_img, right_img).astype(np.float32) / 16.0
         # norm_disparity_img = cv2.normalize(disparity_img, None, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX,
-        #                                    dtype=cv2.CV_32F)
 
-
-        # left_img_blurred = cv2.GaussianBlur(left_img, (11, 11), 0)
-        # mask = fgbg.apply(left_img_blurred)
 
         mask = fgbg.apply(left_img)
 
-
-
-        # difference = cv2.absdiff(left_img_blurred, reference_img)
-        # diff_gray = cv2.cvtColor(difference, cv2.COLOR_BGR2GRAY)
-        # _, thresh = cv2.threshold(difference, 50, 255, cv2.THRESH_BINARY)
-        # thresh_gray = cv2.cvtColor(thresh, cv2.COLOR_BGR2GRAY)
-
         mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel, iterations=3)
         mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel, iterations=5)
-        # cutout = cv2.cvtColor(left_img * mask[:, :, None], cv2.COLOR_BGR2RGB)
 
         contours = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         contours = np.asarray(imutils.grab_contours(contours))
-        cv2.drawContours(left_img, contours, -1, (0, 255, 0), 3)
+        # cv2.drawContours(left_img, contours, -1, (0, 255, 0), 3)
+
         if len(contours) > 0:
-            cx, cy = calculate_centroid(contours)
-            cv2.circle(left_img, (cx, cy), 6, (255, 0, 0), -1)
+            centroid = calculate_centroid(contours)
+            assert(disparity_img.shape[:2] == left_img.shape[:2]), f'Disparity img shape: {disparity_img.shape[:2]}, ' \
+                                                           f'Left img shape: {left_img.shape[:2]}'
 
-            # w, h = disparity_img.shape
-            # print('(x, y) = ({}, {})\t (w, h) = ({}, {})'.format(cx, cy, w, h))
+            if centroid:
+                """Kalman predict and update"""
+                cx, cy = centroid
+                left_img = Kal.plot_pos(contours[-1], centroid, left_img, pred=False)
 
-            # # Q_scaled = (Cal.Q*0.4)
-            cz = construct_z_coordinate(disparity_img[cy, cx], baseline, focal_length * down_sample_ratio)
+                z_coor = construct_z_coordinate(disparity_img[cy, cx], baseline, focal_length * down_sample_ratio)
 
+                pos_string = f'(x, y, z) = ({centroid[0]},{centroid[1]},{z_coor})'
+                cv2.putText(left_img, pos_string, (15, 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0))
+                # cv2.putText(left_img, kal_string, (15, 40), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0))
+                centroid_pos = [centroid[0], centroid[1], z_coor]
 
-            kx, ky, kz = kalman(cx, cy, cz)
+                if np.abs(last_centroid[0]-centroid[0]) > 125:
+                    print(f'Reset kalman filter')
+                    Kal.reset_kalman()
 
-            pos_string = '(x,y,z) = ({}, {}, {})'.format(cx, cy, cz)
-            kal_string = '(x,y,z) = ({}, {}, {})'.format(kx[0], ky[0], kz[0])
+                centroid_pred = Kal.kalman(centroid_pos, update=True)
 
-            # cv2.rectangle(left_img, (10, 2), (350, 20), (255, 255, 255), -1)
-            cv2.putText(left_img, pos_string, (15, 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0))
-            cv2.putText(left_img, kal_string, (15, 40), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0))
+                left_img = Kal.plot_pos(contours[-1], centroid_pred, left_img, pred=True)
+
+                last_centroid = centroid
+            else:
+                """Kalman Predict"""
+                centroid_pred = Kal.kalman(update=False)
+                left_img = Kal.plot_pos(contours[-1], centroid_pred, left_img, pred=True)
+
 
         cv2.imshow('Images', left_img)
-        if cv2.waitKey(10) & 0xFF == ord('q'):
+        if cv2.waitKey(5) & 0xFF == ord('q'):
             break
 
     cv2.destroyAllWindows()
