@@ -43,9 +43,22 @@ class Classifier:
 class YOLOClassifier:
 
     def __init__(self):
-        self.yolo = cv2.dnn.readNetFromDarknet('./../darknet/cfg/yolov3.cfg', './../darknet/weights/yolov3.weights')
+        self.yolo = cv2.dnn.readNetFromDarknet('./../darknet/cfg/yolov3.cfg',
+                                               './../darknet/weights/yolov3.weights')
+
+        labelsPath = './../darknet/data/9k.names'
+        self.LABELS = open(labelsPath).read().strip().split("\n")
 
         self.setup_layers()
+
+        np.random.seed(42)
+        self.COLORS = np.random.randint(0, 255, size=(len(self.LABELS), 3),
+                                   dtype="uint8")
+
+        print(self.LABELS)
+        self.class_id_box = self.LABELS.index('box')
+        self.class_id_book = self.LABELS.index('book')
+        self.class_id_cup = self.LABELS.index('cup')
 
     def setup_layers(self):
         ln = self.yolo.getLayerNames()
@@ -53,11 +66,57 @@ class YOLOClassifier:
 
     def classify(self, img):
         img = np.asarray(img)
+        (H, W) = img.shape[:2]
+
         blob = cv2.dnn.blobFromImage(img, 1 / 255.0, (416, 416), swapRB=True, crop=False)
         self.yolo.setInput(blob)
         start = time.time()
-        layerOutputs = self.yolo.forward()
+        layerOutputs = self.yolo.forward(self.ln)
         end = time.time()
         print(layerOutputs)
         # show timing information on YOLO
-        print("[INFO] YOLO took {:.6f} seconds".format(end - start))
+        # print("[INFO] YOLO took {:.6f} seconds".format(end - start))
+        classIDs = []
+        confidences = []
+        boxes = []
+        for output in layerOutputs:
+            for detection in output:
+                scores = detection[5:]
+                classID = np.argmax(scores)
+                confidence = scores[classID]
+
+                if confidence > 0.1:
+                    box = detection[0:4] * np.array([W, H, W, H])
+                    (centerX, centerY, width, height) = box.astype("int")
+                    x = int(centerX - (width / 2))
+                    y = int(centerY - (height / 2))
+
+                    boxes.append([int(x), int(y), int(width), int(height)])
+                    classIDs.append(classID)
+                    confidences.append(float(confidence))
+        print(confidences)
+        print(boxes)
+        idxs = cv2.dnn.NMSBoxes(boxes, confidences, 0.1, 0.3)
+
+        if len(idxs) > 0:
+            # loop over the indexes we are keeping
+            for i in idxs.flatten():
+                # extract the bounding box coordinates
+                (x, y) = (boxes[i][0], boxes[i][1])
+                (w, h) = (boxes[i][2], boxes[i][3])
+                # draw a bounding box rectangle and label on the frame
+                color = [int(c) for c in self.COLORS[classIDs[i]]]
+                cv2.rectangle(img, (x, y), (x + w, y + h), color, 2)
+                text = "{}: {:.4f}".format(self.LABELS[classIDs[i]],
+                                           confidences[i])
+                cv2.putText(img, text, (x, y - 5),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+
+        cv2.imshow("Image", img)
+        cv2.waitKey(500)
+        cv2.destroyAllWindows()
+
+
+
+
+

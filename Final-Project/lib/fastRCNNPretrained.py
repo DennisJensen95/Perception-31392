@@ -37,11 +37,17 @@ def get_prediction(img):
   labels = pred[0]['labels'].cpu().numpy()
   return boxes, scores, labels
 
-def object_detection_api(img, objects_to_detect, threshold=0.5, rect_th=3, text_size=3, text_th=3):
+def object_detection_api(img, objects_to_detect, threshold=0.5, rect_th=3, text_size=3, text_th=3, label=False):
     boxes, pred_cls, labels = get_prediction(img) # Get predictions
     # img = cv2.imread(img_path) # Read image with cv2
     # img = cv2.resize(img, (128*4, 72*4))
     # img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB) # Convert to RGB
+    if label:
+        if len(pred_cls) > 0:
+            idx = np.argmax(pred_cls)
+            return COCO_INSTANCE_CATEGORY_NAMES[labels[idx]], pred_cls[idx]
+        else:
+            return None
 
     for i in range(len(boxes)):
 

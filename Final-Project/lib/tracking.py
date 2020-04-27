@@ -51,9 +51,9 @@ class Tracking:
 
         # The transition matrix (9x9).
         delta_t = 0.1
-        self.F = np.array([[1, 0, 0, delta_t, 0, 0, 1 / 2 * delta_t ** 2, 0, 0],
-                           [0, 1, 0, 0, delta_t, 0, 0, 1 / 2 * delta_t ** 2, 0],
-                           [0, 0, 1, 0, 0, delta_t, 0, 0, 1 / 2 * delta_t ** 2],
+        self.F = np.array([[1, 0, 0, delta_t, 0, 0, 0, 0, 0],
+                           [0, 1, 0, 0, delta_t, 0, 0, 0, 0],
+                           [0, 0, 1, 0, 0, delta_t, 0, 0, 0],
                            [0, 0, 0, 1, 0, 0, delta_t, 0, 0],
                            [0, 0, 0, 0, 1, 0, 0, delta_t, 0],
                            [0, 0, 0, 0, 0, 1, 0, 0, delta_t],

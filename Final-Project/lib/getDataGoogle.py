@@ -257,6 +257,37 @@ class DataSetLoader(object):
     def __len__(self):
         return len(self.dataframe['ImgPath'])
 
+class SimpleDataLoader(object):
+
+    def __init__(self, dataframe, transform, classes_encoder):
+        self.transform = transform
+        self.dataframe = dataframe
+        self.classes_encoder = classes_encoder
+
+    def __getitem__(self, idx):
+        """Get an image"""
+        img = Image.open(self.dataframe['ImgPath'][idx]).convert('RGB')
+        width, height = np.asarray(img).shape[:2]
+        box = [int(self.dataframe['XMin'][idx] * width), int(self.dataframe['YMin'][idx] * height),
+                int(self.dataframe['XMax'][idx] * width), int(self.dataframe['YMax'][idx] * height)]
+
+        img = img.crop((box[0], box[1], box[2], box[3]))
+        img = img.resize((128, 128))
+
+        # img_np = np.asarray(img)
+        # cv2.imshow('Debug', img_np)
+        # cv2.waitKey(500)
+
+        labels = self.classes_encoder[self.dataframe['ClassName'][idx]]
+        labels = torch.as_tensor(labels, dtype=torch.int64)
+
+        img = self.transform(img)
+
+        return img, labels
+
+    def __len__(self):
+        return len(self.dataframe['ImgPath'])
+
 def get_transform(train):
     transforms = []
     transforms.append(T.ToTensor())

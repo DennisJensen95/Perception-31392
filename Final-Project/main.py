@@ -19,8 +19,8 @@ def main():
 
     images_left = sorted(glob.glob("data/Stereo_calibration_images/left*.png"))
     images_right = sorted(glob.glob("data/Stereo_calibration_images/right*.png"))
-    images_left_conveyor = sorted(glob.glob("data/Stereo_conveyor_without_occlusions/left/*.png"))
-    images_right_conveyor = sorted(glob.glob("data/Stereo_conveyor_without_occlusions/right/*.png"))
+    images_left_conveyor = sorted(glob.glob("data/Stereo_conveyor_with_occlusions/left/*.png"))
+    images_right_conveyor = sorted(glob.glob("data/Stereo_conveyor_with_occlusions/right/*.png"))
     images_conveyor = np.asarray([images_left_conveyor, images_right_conveyor]).T
     images = np.asarray([images_left, images_right]).T
 
@@ -80,7 +80,7 @@ def main():
     fgbg = cv2.createBackgroundSubtractorKNN(history=500, dist2Threshold=500, detectShadows=False)
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
 
-    images_conveyor = images_conveyor[500:-1]  # start from first box with 80:
+    images_conveyor = images_conveyor[0:-1]  # start from first box with 80:
     last_centroid = [0, 0]
 
     area_threshold = 0.55
@@ -94,9 +94,6 @@ def main():
 
         left_img = downsample_image(left_img, down_sample_ratio)
         right_img = downsample_image(right_img, down_sample_ratio)
-
-        # plt.imshow(left_img[80:-1, 100:-1])
-        # plt.show()
 
         if debug_disp_slider:
             slider = Slider(stereo, left_img, right_img)
@@ -129,7 +126,15 @@ def main():
 
                 # Save images
                 crop_img = track.crop_image_rectangle(left_img, contours[-1], images[0])
-                print(classification.classify(left_img))
+
+                if preTrainedFastRcnn:
+                    resp = object_detection_api(np.array(crop_img), objects_to_detect, threshold=0.5, label=True)
+                    if isinstance(resp, tuple):
+                        label, confi = resp
+                    else:
+                        label = None
+                        confi = None
+                    print(f'Detected: {label}: Confidence: {confi}')
 
                 left_img = track.plot_pos(contours[-1], centroid, left_img, pred=False)
 
@@ -173,18 +178,12 @@ def main():
             prediction_string = f'Prediction: (x, y, z) = ({centroid_pred[0][0]:.2f},{centroid_pred[1][0]:.2f},{centroid_pred[2][0]:.2f})'
             cv2.putText(left_img, prediction_string, (15, 35), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 0, 0))
 
-        if preTrainedFastRcnn:
-            left_img = left_img[80:-1, 100:-1]
-            img_fastRCNN = object_detection_api(left_img, objects_to_detect, threshold=0.8)
 
         cv2.imshow('Images', left_img)
         if cv2.waitKey(5) & 0xFF == ord('q'):
             break
 
     cv2.destroyAllWindows()
-
-    # export_pointcloud(disparity_map=disparity_img, colors=left_img, Q=Q_scaled)
-
 
 if __name__ == '__main__':
     main()
