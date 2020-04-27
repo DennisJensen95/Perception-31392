@@ -1,11 +1,8 @@
-
-
 import torch.nn as nn
 import torch.nn.functional as F
 import torch
 from torch import optim
 import numpy as np
-
 
 class Net(nn.Module):
     def __init__(self, input_shape, classes, learning_rate):
