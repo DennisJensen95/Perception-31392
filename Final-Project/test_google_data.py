@@ -1,5 +1,5 @@
 from lib.getDataGoogle import GetGoogleDataset, DataSetLoader, get_transform
-from lib.trainResnet50RCNN import getModel
+from lib.pretrainedNeuralNets import getModel
 import pandas as pd
 import torch
 import torchvision.transforms as T

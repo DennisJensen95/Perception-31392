@@ -8,17 +8,22 @@ from lib.tracking import *
 import cv2
 from lib.sliderProgram import Slider
 import matplotlib.pyplot as plt
+import torch
 import imutils
 from lib.fastRCNNPretrained import object_detection_api
+from lib.Classification import Classifier, YOLOClassifier
 
 
 def main():
+    device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
+
     images_left = sorted(glob.glob("data/Stereo_calibration_images/left*.png"))
     images_right = sorted(glob.glob("data/Stereo_calibration_images/right*.png"))
-    images_left_conveyor = sorted(glob.glob("data/stereo_conveyor_with_occlusions/left/*.png"))
-    images_right_conveyor = sorted(glob.glob("data/stereo_conveyor_with_occlusions/right/*.png"))
+    images_left_conveyor = sorted(glob.glob("data/Stereo_conveyor_without_occlusions/left/*.png"))
+    images_right_conveyor = sorted(glob.glob("data/Stereo_conveyor_without_occlusions/right/*.png"))
     images_conveyor = np.asarray([images_left_conveyor, images_right_conveyor]).T
     images = np.asarray([images_left, images_right]).T
+
 
     calibrate = False
     debug_disp_slider = False
@@ -35,6 +40,11 @@ def main():
         Cal.load_class('ClassDataSaved')
 
     track = Tracking(running_mean_num=2)
+
+    # path_pca = './Results/Saved_SVM_Models/PCA_transform.sav'
+    # path_clf = './Results/Saved_SVM_Models/PCA_final_open_image.sav'
+    # classification = Classifier(path_clf, path_pca, device)
+    classification = YOLOClassifier()
 
     baseline = 0.12
     focal_length = Cal.Q[2, 3]
@@ -70,7 +80,7 @@ def main():
     fgbg = cv2.createBackgroundSubtractorKNN(history=500, dist2Threshold=500, detectShadows=False)
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
 
-    images_conveyor = images_conveyor[0:-1]  # start from first box with 80:
+    images_conveyor = images_conveyor[500:-1]  # start from first box with 80:
     last_centroid = [0, 0]
 
     area_threshold = 0.55
@@ -116,6 +126,11 @@ def main():
                 """Kalman predict and update"""
                 centroid = track.running_mean_centroid()
                 cx, cy = centroid
+
+                # Save images
+                crop_img = track.crop_image_rectangle(left_img, contours[-1], images[0])
+                print(classification.classify(left_img))
+
                 left_img = track.plot_pos(contours[-1], centroid, left_img, pred=False)
 
                 z_coor = disparity_img[cy, cx]
@@ -150,7 +165,6 @@ def main():
 
 
         if predict_only:
-            print("predicting")
             """Kalman Predict"""
             centroid_pred = track.kalman_cv2(update=False)
             left_img = track.plot_pos(last_found_contour, centroid_pred, left_img, pred=True)

@@ -1,0 +1,103 @@
+,Unnamed: 0,Unnamed: 0.1,Unnamed: 0.1.1,ImgPath,XMin,XMax,YMin,YMax,ClassName
+0,0,0.0,0.0,rcnn-test-data/Box/836e35877d1f148e.jpg,0.133125,0.940625,0.228333,0.750833,Box
+1,1,1.0,1.0,rcnn-test-data/Box/cd087ec2f10662ca.jpg,0.116875,0.484375,0.078799,0.463415,Box
+2,2,2.0,45.0,rcnn-test-data/Box/3724bbc976e3be7b.jpg,0.113508,1.0,0.335625,0.841875,Book
+3,3,3.0,77.0,rcnn-test-data/Box/e7f1279c61ed8b7d.jpg,0.075195,0.136719,0.319118,0.460294,Book
+4,4,4.0,171.0,rcnn-test-data/Box/02aa0ad9af1487ae.jpg,0.537582,0.94281,0.514706,0.968954,Coffee cup
+5,5,5.0,1093.0,rcnn-test-data/Box/b46ac54bebfcc223.jpg,0.379883,0.607422,0.03776,0.257812,Coffee cup
+6,6,3805.0,,rcnn-test-data/Book/afc86329656b7694.jpg,0.706897,0.864828,0.12375,0.848125,Book
+7,7,4816.0,,rcnn-test-data/Book/a8023f8236dd098a.jpg,0.56,0.79,0.443333,0.51,Book
+8,8,6446.0,,rcnn-test-data/Coffee cup/339f88d40f4425c3.jpg,0.39,0.626667,0.1825,0.5875,Coffee cup
+9,9,1374.0,,rcnn-test-data/Box/8b9cb5e4a4c71059.jpg,0.405858,0.8,0.59,0.99125,Box
+10,10,1024.0,,rcnn-test-data/Box/1db59241954c4b8a.jpg,0.06,0.25,0.768333,0.999167,Box
+11,11,5901.0,,rcnn-test-data/Coffee cup/d055140d4f08b8bf.jpg,0.027397,0.09980399999999999,0.764706,0.841176,Coffee cup
+12,6776,,,rcnn-test-data/Coffee cup/f3c7fe914ac5a396.jpg,0.12125,0.688125,0.106667,0.760833,Coffee cup
+13,746,,,rcnn-test-data/Box/e9f8594dbc392e35.jpg,0.036875,0.183125,0.420833,0.672917,Box
+14,6709,,,rcnn-test-data/Coffee cup/ee5d2fcedd604cab.jpg,0.560463,0.7129340000000001,0.774219,0.8703129999999999,Coffee cup
+15,5889,,,rcnn-test-data/Coffee cup/073029eeea505bf0.jpg,0.1475,0.534375,0.459384,0.803922,Coffee cup
+16,6643,,,rcnn-test-data/Coffee cup/ee153d524ace12f7.jpg,0.665625,0.945312,0.36875,0.71875,Coffee cup
+17,4310,,,rcnn-test-data/Book/13b51dc44bcc78a5.jpg,0.396875,0.799375,0.200376,0.942615,Book
+18,837,,,rcnn-test-data/Box/00257942c4ee6b34.jpg,0.512195,0.7814260000000001,0.205625,0.40875,Box
+19,2658,,,rcnn-test-data/Book/435c6ad3fa76843f.jpg,0.25875,0.57375,0.485929,0.822702,Book
+20,517,,,rcnn-test-data/Box/6bef92f78e257e7f.jpg,0.011875,0.999375,0.12688,0.99906,Box
+21,268,,,rcnn-test-data/Box/06191492131f29b8.jpg,0.20125,0.38125,0.746954,0.989691,Box
+22,56,,,rcnn-test-data/Box/02dc1b910a8d039f.jpg,0.115,0.38375,0.0,0.4825,Box
+23,6635,,,rcnn-test-data/Coffee cup/407b64caae267103.jpg,0.009381,0.32457800000000003,0.31625,0.526875,Coffee cup
+24,6778,,,rcnn-test-data/Coffee cup/fa8e2257519208a7.jpg,0.28,0.589333,0.544,0.8440000000000001,Coffee cup
+25,4651,,,rcnn-test-data/Book/94bd192d852b7f75.jpg,0.082813,0.265625,0.7875,0.919792,Book
+26,6356,,,rcnn-test-data/Coffee cup/648645eed688c37e.jpg,0.0,0.567187,0.421875,0.98125,Coffee cup
+27,5847,,,rcnn-test-data/Coffee cup/b853fb4b540bd330.jpg,0.0,0.545752,0.111111,0.779412,Coffee cup
+28,1482,,,rcnn-test-data/Box/7fc5b01c10fe3875.jpg,0.0,0.47125,0.135,0.999167,Box
+29,1085,,,rcnn-test-data/Box/1ca524bacc4cee22.jpg,0.21,0.428333,0.08125,0.230625,Box
+30,4500,,,rcnn-test-data/Book/16ac9c5ac165c48f.jpg,0.44,0.468125,0.08630399999999999,0.999062,Book
+31,5999,,,rcnn-test-data/Coffee cup/d42864e6a9513414.jpg,0.179375,0.380625,0.6919390000000001,0.957774,Coffee cup
+32,32,,,rcnn-test-data/Box/2206fe34ffe59753.jpg,0.56875,0.95,0.135937,0.539062,Box
+33,984,,,rcnn-test-data/Box/25d94d41480af605.jpg,0.074375,0.541875,0.51907,0.948837,Box
+34,6197,,,rcnn-test-data/Coffee cup/1906c2b1c73b5a55.jpg,0.0475,0.221875,0.31,0.516667,Coffee cup
+35,971,,,rcnn-test-data/Box/6e31165b4e49b91a.jpg,0.390782,0.7955909999999999,0.277056,0.507937,Box
+36,4771,,,rcnn-test-data/Book/0490601456f17c54.jpg,0.963125,0.975625,0.422139,0.529081,Book
+37,1108,,,rcnn-test-data/Box/b895a81c054312ce.jpg,0.52878,0.6876439999999999,0.35,0.555,Box
+38,5885,,,rcnn-test-data/Coffee cup/f9de03124d74bf9c.jpg,0.763125,0.863125,0.780579,0.901027,Coffee cup
+39,2944,,,rcnn-test-data/Book/3bc372d7be19d1fc.jpg,0.0,0.020625,0.3775,0.480833,Book
+40,6469,,,rcnn-test-data/Coffee cup/60636cf402cb2616.jpg,0.72,0.82,0.812383,0.938086,Coffee cup
+41,171,,,rcnn-test-data/Box/02aa0ad9af1487ae.jpg,0.537582,0.94281,0.514706,0.968954,Coffee cup
+42,2825,,,rcnn-test-data/Book/3972a545aa8bdff0.jpg,0.2625,0.407813,0.85,0.94375,Book
+43,6721,,,rcnn-test-data/Coffee cup/08d41fdfd6b79b29.jpg,0.4576270000000001,0.741055,0.388125,0.574375,Coffee cup
+44,5691,,,rcnn-test-data/Coffee cup/e82a196401b65e45.jpg,0.0,0.2075,0.0,0.404516,Coffee cup
+45,5015,,,rcnn-test-data/Book/62d0cacdeea69f06.jpg,0.0,0.997917,0.31875,0.414062,Book
+46,6387,,,rcnn-test-data/Coffee cup/d13c23114de963b8.jpg,0.068627,0.674837,0.434641,0.985294,Coffee cup
+47,6683,,,rcnn-test-data/Coffee cup/6bc7bb2f405ad805.jpg,0.0,1.0,0.065359,1.0,Coffee cup
+48,501,,,rcnn-test-data/Box/67dc3806be535e38.jpg,0.3025,0.574375,0.090833,0.4675,Box
+49,6756,,,rcnn-test-data/Coffee cup/45f18d4a8910dc0e.jpg,0.285937,0.379687,0.792708,0.907292,Coffee cup
+50,6186,,,rcnn-test-data/Coffee cup/522ae65a929ae624.jpg,0.14800000000000002,0.9990000000000001,0.068759,0.998505,Coffee cup
+51,6010,,,rcnn-test-data/Coffee cup/834395328bf87e17.jpg,0.321229,0.562384,0.253125,0.4225,Coffee cup
+52,3775,,,rcnn-test-data/Book/3a083bcb1026b6db.jpg,0.0525,0.999375,0.0,0.774953,Book
+53,1210,,,rcnn-test-data/Box/ad963057c74178c9.jpg,0.540625,0.869375,0.380833,0.836667,Box
+54,2620,,,rcnn-test-data/Book/3e082125a0a90038.jpg,0.0,0.43625,0.408333,0.776667,Book
+55,2826,,,rcnn-test-data/Book/3972a545aa8bdff0.jpg,0.32968800000000004,0.451562,0.81875,0.890625,Book
+56,2316,,,rcnn-test-data/Book/9ae446b69c7b60a7.jpg,0.0,0.999286,0.0,0.999048,Book
+57,691,,,rcnn-test-data/Box/7f32e47d68a3b3ca.jpg,0.7275,0.89125,0.293621,0.84803,Box
+58,2743,,,rcnn-test-data/Book/6221a203b30a7bc4.jpg,0.223125,0.254375,0.0175,0.98,Book
+59,2568,,,rcnn-test-data/Book/fb795373020e4468.jpg,0.17625,0.504375,0.843333,0.998889,Book
+60,1919,,,rcnn-test-data/Book/0279382e07bed7de.jpg,0.0,0.997137,0.0,0.982402,Book
+61,6460,,,rcnn-test-data/Coffee cup/87bdd296bc8a4c5a.jpg,0.645833,0.8825,0.6325,0.765625,Coffee cup
+62,784,,,rcnn-test-data/Box/66dfbe012737d000.jpg,0.07936499999999999,0.845938,0.306875,0.92125,Box
+63,3111,,,rcnn-test-data/Book/8c62de4f014bcb77.jpg,0.178125,0.96875,0.51875,0.814583,Book
+64,3491,,,rcnn-test-data/Book/bfeccf6b6309f60a.jpg,0.544375,0.73125,0.570621,0.616761,Book
+65,4582,,,rcnn-test-data/Book/d85772c45fd993ea.jpg,0.0,0.01375,0.597561,0.745779,Book
+66,2773,,,rcnn-test-data/Book/194d5fcd70720a37.jpg,0.028125,0.455,0.216736,0.294561,Book
+67,1502,,,rcnn-test-data/Box/9d961be36b8e277f.jpg,0.81375,0.893125,0.4108310000000001,0.489262,Box
+68,5410,,,rcnn-test-data/Book/3cc34dcb558b003b.jpg,0.421596,0.486385,0.545625,0.595,Book
+69,1826,,,rcnn-test-data/Box/70ed5d71ee3bba6b.jpg,0.020625,0.243125,0.3275,0.5375,Box
+70,102,,,rcnn-test-data/Box/b49b108681adbb9e.jpg,0.11125,0.88125,0.062222,0.965556,Box
+71,6517,,,rcnn-test-data/Coffee cup/98e2f1d293f3d4ff.jpg,0.833125,0.86625,0.8711110000000001,0.946667,Coffee cup
+72,325,,,rcnn-test-data/Box/cd2ec2d740eed17d.jpg,0.410625,0.498125,0.395833,0.565,Box
+73,6205,,,rcnn-test-data/Coffee cup/01f576b23e828348.jpg,0.175833,0.394167,0.67,0.784375,Coffee cup
+74,554,,,rcnn-test-data/Box/fd331bb47663aa61.jpg,0.009375,0.35625,0.3,0.579167,Box
+75,6353,,,rcnn-test-data/Coffee cup/0feac50fe7943375.jpg,0.025,0.715,0.0,0.57875,Coffee cup
+76,1821,,,rcnn-test-data/Box/c4132516a5491d6f.jpg,0.0,0.16328099999999998,0.275,0.501042,Box
+77,5874,,,rcnn-test-data/Coffee cup/0efdd59605b83e74.jpg,0.133125,0.20375,0.755409,0.8466600000000001,Coffee cup
+78,624,,,rcnn-test-data/Box/02f901f2d22b81c4.jpg,0.542188,0.723437,0.76875,0.998958,Box
+79,2930,,,rcnn-test-data/Book/8e0f0a815df829dc.jpg,0.86125,0.999375,0.230833,0.430833,Book
+80,1620,,,rcnn-test-data/Box/0cfafc989f7b2f2e.jpg,0.056875,0.885,0.1875,0.8525,Box
+81,6334,,,rcnn-test-data/Coffee cup/245e08c8a5d6bb5e.jpg,0.5826560000000001,0.746161,0.671875,0.764375,Coffee cup
+82,461,,,rcnn-test-data/Box/25246c20e31bba26.jpg,0.0394,0.932458,0.21722800000000006,0.914794,Box
+83,1480,,,rcnn-test-data/Box/1720055dc2edd93e.jpg,0.33,0.859375,0.08349,1.0,Box
+84,5802,,,rcnn-test-data/Coffee cup/03eda0182dc86d69.jpg,0.27375,0.538125,0.106942,0.466229,Coffee cup
+85,6052,,,rcnn-test-data/Coffee cup/2d162592f03bda3f.jpg,0.036697,0.246038,0.31,0.47375,Coffee cup
+86,1271,,,rcnn-test-data/Box/f2dd01ac9faa6e57.jpg,0.0,0.999163,0.01125,0.783125,Box
+87,106,,,rcnn-test-data/Box/d6cb55437bbfa8ec.jpg,0.06625,0.94625,0.058333,0.921667,Box
+88,5510,,,rcnn-test-data/Book/1575fe81f18a7bf0.jpg,0.055,0.9425,0.033770999999999995,0.966229,Book
+89,556,,,rcnn-test-data/Box/8c2cfcf58ac257ed.jpg,0.02,0.973125,0.044167000000000005,0.953333,Box
+90,5917,,,rcnn-test-data/Coffee cup/5d38eaf9d9009404.jpg,0.835625,0.998125,0.681667,0.899167,Coffee cup
+91,2276,,,rcnn-test-data/Book/4437e314ca38bd03.jpg,0.333984,0.364258,0.871094,0.998698,Book
+92,1226,,,rcnn-test-data/Box/5791c4164520f708.jpg,0.0,0.589375,0.272807,0.926316,Box
+93,5895,,,rcnn-test-data/Coffee cup/8d16ef1eb6012a68.jpg,0.81875,0.99875,0.24,0.5966670000000001,Coffee cup
+94,60,,,rcnn-test-data/Box/c8ce0524d70710fc.jpg,0.0,0.593125,0.009167,0.580833,Box
+95,3037,,,rcnn-test-data/Book/9d0f25fb439a629b.jpg,0.851562,0.999023,0.177083,0.407552,Book
+96,2333,,,rcnn-test-data/Book/ce923d260c997f8c.jpg,0.26625,0.334375,0.350844,0.391182,Book
+97,3865,,,rcnn-test-data/Book/510b3df1ca76324f.jpg,0.228125,0.835,0.338002,0.596639,Book
+98,3529,,,rcnn-test-data/Book/3b7437af286f6482.jpg,0.668994,0.996508,0.352654,0.662709,Book
+99,2456,,,rcnn-test-data/Book/a117d98bcd16e088.jpg,0.333125,0.340625,0.2825,0.380833,Book
+100,5079,,,rcnn-test-data/Book/b2f5d43a70eec542.jpg,0.838125,0.886875,0.649167,0.715,Book
+101,4282,,,rcnn-test-data/Book/c013e4103571ac88.jpg,0.15125,0.2225,0.374296,0.522514,Book

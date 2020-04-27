@@ -2,6 +2,8 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 import imutils
+from PIL import Image
+import re
 from numpy.linalg import inv, pinv
 
 
@@ -195,3 +197,14 @@ class Tracking:
         self.centroids_x_y.insert(0, centroid)
         self.centroids_x_y = self.centroids_x_y[:self.running_mean_num]
         return cx, cy
+
+    def crop_image_rectangle(self, img, contour, path, save=False):
+        (x, y, w, h) = cv2.boundingRect(contour)
+        img = Image.fromarray(img)
+        img = img.crop((x-w/2, y-h/2, x+w+w*1/2, y+h+h*1/2))
+        if save:
+            name = re.findall("/(\w+).png", path)[0]
+            path = f'./Results/Cropped_Images/{name}_cropped.png'
+            img.save(path)
+
+        return img

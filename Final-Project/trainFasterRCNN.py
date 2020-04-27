@@ -3,7 +3,7 @@ import lib.visionHelper.utils as utils
 from lib.getDataGoogle import DataSetLoader, get_transform, classes_encoder
 import torch
 import pandas as pd
-from lib.trainResnet50RCNN import getModel
+from lib.pretrainedNeuralNets import getModel
 import os
 import re
 

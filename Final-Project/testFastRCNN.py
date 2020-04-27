@@ -1,6 +1,6 @@
 from lib.fastRCNNPretrained import *
 from lib.prepareData import *
-from lib.trainResnet50RCNN import getModel
+from lib.pretrainedNeuralNets import getModel
 from lib.getDataGoogle import classes_encoder
 from torchvision import transforms, models
 import torch
