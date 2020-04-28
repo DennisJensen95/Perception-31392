@@ -4,8 +4,10 @@ from keras.preprocessing.image import img_to_array
 import torch
 import numpy as np
 from lib.pretrainedNeuralNets import getCNNFeatureExtractVGG19
+import torchvision.transforms as transforms
 import cv2
 import time
+from lib.NeuralNetClassifier import Net
 
 class Classifier:
 
@@ -39,6 +41,41 @@ class Classifier:
         class_predicted = self.clf.predict(X)
 
         return class_predicted
+
+class NeuralNetClassifier:
+
+    def __init__(self):
+        self.net_load_path = './data/NeuralNet/Classifier_Model_95.net'
+        self.transform = transforms.Compose(
+            [transforms.ToTensor(),
+             transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+        self.classes_encoder = {'Box': 0, 'Book': 1, 'Coffee cup': 2}
+        self.classes_decoder = {v: k for k, v in self.classes_encoder.items()}
+
+    def process_image(self, img, device):
+        img = img.convert('RGB')
+        img = img.resize((224, 224))
+        img = self.transform(img).to(device)
+        img = img.view(1, 3, 224, 224)
+
+        return img
+
+    def load_model(self, device, eval=True):
+        input_shape = (3, 224, 224)
+        net = Net(input_shape, classes=3).to(device)
+        net.load_state_dict(torch.load(self.net_load_path))
+        self.net = net
+
+        if eval:
+            self.net.eval()
+
+    def classify_img(self, img, device):
+        img = self.process_image(img, device)
+        outputs = self.net(img)
+        _, predicted = torch.max(outputs.data, 1)
+        predicted = predicted.cpu().numpy()
+        return self.classes_decoder[predicted[0]]
+
 
 class YOLOClassifier:
 

@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import torch
 import imutils
 from lib.fastRCNNPretrained import object_detection_api
-from lib.Classification import Classifier, YOLOClassifier
+from lib.Classification import Classifier, YOLOClassifier, NeuralNetClassifier
 
 
 def main():
@@ -40,6 +40,8 @@ def main():
         Cal.load_class('ClassDataSaved')
 
     track = Tracking(running_mean_num=2)
+    clf = NeuralNetClassifier()
+    clf.load_model(device, eval=True)
 
     # path_pca = './Results/Saved_SVM_Models/PCA_transform.sav'
     # path_clf = './Results/Saved_SVM_Models/PCA_final_open_image.sav'
@@ -125,6 +127,7 @@ def main():
 
                 # Save images
                 crop_img = track.crop_image_rectangle(left_img, contours[-1], images[0], save=True)
+                label_predict = clf.classify_img(crop_img, device)
 
                 if preTrainedFastRcnn:
                     resp = object_detection_api(np.array(crop_img), objects_to_detect, threshold=0.5, label=True)
@@ -150,6 +153,9 @@ def main():
 
                 left_img = track.plot_pos(contours[-1], centroid_pred, left_img, pred=True)
 
+                (x, y, w, h) = cv2.boundingRect(contours[-1])
+                cv2.putText(left_img, label_predict, (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 255))
+
                 last_centroid = centroid
 
                 # Display text on screen
@@ -172,6 +178,9 @@ def main():
             """Kalman Predict"""
             centroid_pred = track.kalman_cv2(update=False)
             left_img = track.plot_pos(last_found_contour, centroid_pred, left_img, pred=True)
+            (x, y, w, h) = cv2.boundingRect(last_found_contour[-1])
+            cv2.putText(left_img, label_predict, (centroid_pred[0]-int(w/2), centroid_pred[1]-int(h/2)), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 255))
+
 
             # Display text on screen
             prediction_string = f'Prediction: (x, y, z) = ({centroid_pred[0][0]:.2f},{centroid_pred[1][0]:.2f},{centroid_pred[2][0]:.2f})'

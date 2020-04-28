@@ -269,16 +269,16 @@ class SimpleDataLoader(object):
     def __getitem__(self, idx):
         """Get an image"""
         if self.base != None:
-            img = Image.open(self.base + self.dataframe['ImgPath'][idx] + self.suffix).convert('LA')
+            img = Image.open(self.base + self.dataframe['ImgPath'][idx] + self.suffix).convert('RGB')
         else:
-            img = Image.open(self.dataframe['ImgPath'][idx]).convert('LA')
+            img = Image.open(self.dataframe['ImgPath'][idx]).convert('RGB')
 
         width, height = np.asarray(img).shape[:2]
         # box = [int(self.dataframe['XMin'][idx] * width), int(self.dataframe['YMin'][idx] * height),
         #         int(self.dataframe['XMax'][idx] * width), int(self.dataframe['YMax'][idx] * height)]
         #
         # img = img.crop((box[0], box[1], box[2], box[3]))
-        img = img.resize((64, 64))
+        img = img.resize((224, 224))
 
         # img_np = np.asarray(img)
         # cv2.imshow('Debug', img_np)

@@ -9,8 +9,8 @@ def getModel(num_classes, pretrained=True):
 
     return model
 
-def getCNNFeatureExtractVGG19():
-    return torchvision.models.vgg19(pretrained=True).features
+def getCNNFeatureExtractVGG19(pretrained):
+    return torchvision.models.vgg19(pretrained=pretrained).features
 
 if __name__ == '__main__':
     model = torchvision.models.vgg19(pretrained=True)

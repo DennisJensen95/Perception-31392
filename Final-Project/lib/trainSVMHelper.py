@@ -9,8 +9,8 @@ from lib.getDataGoogle import classes_encoder
 
 def process_image(img, dataframe, idx, device, debug=False):
     width, height = img.size
-    box = [int(dataframe['XMin'][idx] * width), int(dataframe['YMin'][idx] * height),
-           int(dataframe['XMax'][idx] * width), int(dataframe['YMax'][idx] * height)]
+    # box = [int(dataframe['XMin'][idx] * width), int(dataframe['YMin'][idx] * height),
+    #        int(dataframe['XMax'][idx] * width), int(dataframe['YMax'][idx] * height)]
 
     if debug:
         cv_img = np.array(img)
@@ -19,12 +19,12 @@ def process_image(img, dataframe, idx, device, debug=False):
         cv2.waitKey(500)
         cv2.destroyAllWindows()
 
-    left = box[0]
-    top = box[1]
-    right = box[2]
-    bottom = box[3]
+    # left = box[0]
+    # top = box[1]
+    # right = box[2]
+    # bottom = box[3]
 
-    img = img.crop((left, top, right, bottom))
+    # img = img.crop((left, top, right, bottom))
 
     if debug:
         cv_img = np.array(img)
@@ -48,13 +48,17 @@ def process_image(img, dataframe, idx, device, debug=False):
 
     return img
 
-def extract_features_with_vgg19_cnn(dataframe, featureExtractor, device, save=False, path=None, debug=False):
+def extract_features_with_vgg19_cnn(dataframe, featureExtractor, device, save=False, path=None, debug=False,
+                                    base=None, suffix='.png'):
     # Extract training data
     X = []
     y = []
     for idx in range(len(dataframe['ImgPath'])):
         try:
-            img = Image.open(dataframe['ImgPath'][idx])
+            if base != None:
+                img = Image.open(base + dataframe['ImgPath'][idx] + suffix)
+            else:
+                img = Image.open(dataframe['ImgPath'][idx])
             img = process_image(img, dataframe, idx, device, debug=debug)
             featureOutput = featureExtractor(img).cpu().detach().numpy().flatten()
             X.append(featureOutput)

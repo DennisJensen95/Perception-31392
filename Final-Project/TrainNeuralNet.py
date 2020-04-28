@@ -15,7 +15,7 @@ classes_decoder = inv_map = {v: k for k, v in classes_encoder.items()}
 
 transform = transforms.Compose(
     [transforms.ToTensor(),
-     transforms.Normalize((0.5, 0.5), (0.5, 0.5))])
+     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 
 trainset = pd.read_csv('./../pics_/list.csv')
 testset = pd.read_csv('./test_csv.csv')
@@ -26,17 +26,16 @@ trainLoader = torch.utils.data.DataLoader(trainLoader, batch_size=10, shuffle=Tr
 testLoader = torch.utils.data.DataLoader(testLoader, batch_size=10, shuffle=True, num_workers=4)
 
 lr = 0.0001
-image_shape = (2, 64, 64)
+image_shape = (3, 224, 224)
 num_classes = len(classes_encoder)
 classifier = Net(image_shape, num_classes, lr).to(device)
-epochs = 20
+epochs = 5
 
 def imshow(img):
     img = img / 2 + 0.5     # unnormalize
     npimg = img.numpy()
     plt.imshow(np.transpose(npimg, (1, 2, 0)))
     plt.show()
-
 
 # get some random training images
 dataiter = iter(trainLoader)
@@ -56,7 +55,7 @@ for epoch in range(epochs):
 
         img = img.to(device)
         labels = labels.to(device)
-
+        print(img.shape)
         classifier.optimizer.zero_grad()
 
         outputs = classifier(img)
@@ -155,5 +154,5 @@ print(f'Cup accruacy: {round(correct_cup/total_cup * 100,2)} % out of {total_cup
 print(f'Book accruacy: {round(correct_book/total_book * 100, 2)} % out of {total_book} Books')
 print(f'Boxes accruacy: {round(correct_box/total_box * 100, 2)} % out of {total_box} Boxes')
 
-path_to_save = './data/NeuralNet/Classifier_Model.net'
+path_to_save = 'data/NeuralNet/Classifier_Model.net'
 torch.save(classifier.state_dict(), path_to_save)

@@ -15,10 +15,10 @@ def main(debug):
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
     featureExtractor = getCNNFeatureExtractVGG19().to(device)
 
-    dataframe_train = pd.read_csv('self_made_train.csv')
-    dataframe_test = pd.read_csv('self_made_test.csv')
+    dataframe_train = pd.read_csv('./../pics_/list.csv')
+    dataframe_test = pd.read_csv('test_csv.csv')
 
-    load = True
+    load = False
     do_PCA = True
     path_train = './Results/Saved_SVM_Models/all_train'
     path_test = './Results/Saved_SVM_Models/all_test'
@@ -29,7 +29,8 @@ def main(debug):
 
         # Extract test data
         X_test, y_test = extract_features_with_vgg19_cnn(dataframe_test, featureExtractor, device,
-                                                         save=True, path=path_test, debug=debug)
+                                                         save=True, path=path_test, debug=debug,
+                                                         base='./Results/Cropped_Images/')
     else:
         X_train = np.loadtxt(path_train + '_X', delimiter=',')
         y_train = np.loadtxt(path_train + '_y', delimiter=',')
@@ -65,4 +66,4 @@ def main(debug):
     pickle.dump(pca, open(filename_pca, 'wb'))
 
 if __name__ == '__main__':
-    main(True)
+    main(False)
