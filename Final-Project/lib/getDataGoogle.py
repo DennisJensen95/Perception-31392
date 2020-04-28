@@ -259,20 +259,26 @@ class DataSetLoader(object):
 
 class SimpleDataLoader(object):
 
-    def __init__(self, dataframe, transform, classes_encoder):
+    def __init__(self, dataframe, transform, classes_encoder, base=None, suffix='.png'):
         self.transform = transform
         self.dataframe = dataframe
         self.classes_encoder = classes_encoder
+        self.base = base
+        self.suffix = suffix
 
     def __getitem__(self, idx):
         """Get an image"""
-        img = Image.open(self.dataframe['ImgPath'][idx]).convert('RGB')
-        width, height = np.asarray(img).shape[:2]
-        box = [int(self.dataframe['XMin'][idx] * width), int(self.dataframe['YMin'][idx] * height),
-                int(self.dataframe['XMax'][idx] * width), int(self.dataframe['YMax'][idx] * height)]
+        if self.base != None:
+            img = Image.open(self.base + self.dataframe['ImgPath'][idx] + self.suffix).convert('LA')
+        else:
+            img = Image.open(self.dataframe['ImgPath'][idx]).convert('LA')
 
-        img = img.crop((box[0], box[1], box[2], box[3]))
-        img = img.resize((128, 128))
+        width, height = np.asarray(img).shape[:2]
+        # box = [int(self.dataframe['XMin'][idx] * width), int(self.dataframe['YMin'][idx] * height),
+        #         int(self.dataframe['XMax'][idx] * width), int(self.dataframe['YMax'][idx] * height)]
+        #
+        # img = img.crop((box[0], box[1], box[2], box[3]))
+        img = img.resize((64, 64))
 
         # img_np = np.asarray(img)
         # cv2.imshow('Debug', img_np)

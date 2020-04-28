@@ -10,7 +10,7 @@ data = le.transform(['box', 'box', 'box', 'cup', 'book', 'book', 'book'])
 
 debug = False
 
-images = getImages('data/stereo_conveyor_without_occlusions/left/')
+images = getImages('data/Stereo_conveyor_without_occlusions/left/')
 if debug:
     """"""
     # watchFrames(images, 1)

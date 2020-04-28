@@ -19,8 +19,8 @@ def main():
 
     images_left = sorted(glob.glob("data/Stereo_calibration_images/left*.png"))
     images_right = sorted(glob.glob("data/Stereo_calibration_images/right*.png"))
-    images_left_conveyor = sorted(glob.glob("data/Stereo_conveyor_with_occlusions/left/*.png"))
-    images_right_conveyor = sorted(glob.glob("data/Stereo_conveyor_with_occlusions/right/*.png"))
+    images_left_conveyor = sorted(glob.glob("data/Stereo_conveyor_without_occlusions/left/*.png"))
+    images_right_conveyor = sorted(glob.glob("data/Stereo_conveyor_without_occlusions/right/*.png"))
     images_conveyor = np.asarray([images_left_conveyor, images_right_conveyor]).T
     images = np.asarray([images_left, images_right]).T
 
@@ -44,11 +44,10 @@ def main():
     # path_pca = './Results/Saved_SVM_Models/PCA_transform.sav'
     # path_clf = './Results/Saved_SVM_Models/PCA_final_open_image.sav'
     # classification = Classifier(path_clf, path_pca, device)
-    classification = YOLOClassifier()
+    # classification = YOLOClassifier()
 
     baseline = 0.12
     focal_length = Cal.Q[2, 3]
-
 
     # Stereo Class
     min_disparity = 1  # 1
@@ -125,7 +124,7 @@ def main():
                 cx, cy = centroid
 
                 # Save images
-                crop_img = track.crop_image_rectangle(left_img, contours[-1], images[0])
+                crop_img = track.crop_image_rectangle(left_img, contours[-1], images[0], save=True)
 
                 if preTrainedFastRcnn:
                     resp = object_detection_api(np.array(crop_img), objects_to_detect, threshold=0.5, label=True)
@@ -177,7 +176,6 @@ def main():
             # Display text on screen
             prediction_string = f'Prediction: (x, y, z) = ({centroid_pred[0][0]:.2f},{centroid_pred[1][0]:.2f},{centroid_pred[2][0]:.2f})'
             cv2.putText(left_img, prediction_string, (15, 35), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 0, 0))
-
 
         cv2.imshow('Images', left_img)
         if cv2.waitKey(5) & 0xFF == ord('q'):

@@ -10,11 +10,12 @@ class Net(nn.Module):
 
 
         self.feature = nn.Sequential(
-            nn.Conv2d(3, 32, 8, 4, 0),
+            nn.Conv2d(in_channels=input_shape[0], out_channels=32, kernel_size=8, stride=4, padding=0),
             nn.ReLU(),
+            # nn.BatchNorm2d(32),
             nn.Conv2d(32, 64, 4, 2, 0),
             nn.ReLU(),
-            nn.Conv2d(64, 64, 3, 1, 0),
+            nn.Conv2d(64, 128, 3, 1, 0),
             nn.ReLU()
         )
 
@@ -26,7 +27,7 @@ class Net(nn.Module):
             nn.Linear(512, classes)
         )
 
-        self.optimizer = optim.Adam(self.parameters(), lr=learning_rate)
+        self.optimizer = optim.Adam(self.parameters(), lr=learning_rate, weight_decay=1e-2)
         self.criterion = nn.CrossEntropyLoss()
 
     def forward(self, x):

@@ -11,7 +11,7 @@ test_1 = True
 
 if test_1:
 
-    images = sorted(glob.glob('./data/stereo_conveyor_without_occlusions/left/*.png'))
+    images = sorted(glob.glob('data/Stereo_conveyor_without_occlusions/left/*.png'))
 
     image = images[1330]
     debug = False
@@ -22,7 +22,7 @@ if test_1:
 
     # object_detection_api(image, 50, threshold=0.7)
 
-    images = getImages('data/stereo_conveyor_without_occlusions/left/')
+    images = getImages('data/Stereo_conveyor_without_occlusions/left/')
 
     box_1 = [100, 250, 'Box']
     box_2 = [330, 450, 'Box']
@@ -45,7 +45,7 @@ if test_1:
 
     """ Test trained model """
 
-    images = sorted(glob.glob('./data/stereo_conveyor_without_occlusions/left/*.png'))
+    images = sorted(glob.glob('data/Stereo_conveyor_without_occlusions/left/*.png'))
     image_file = images[400]
 
     our_data = np.array([x, y]).T
