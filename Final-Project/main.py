@@ -19,8 +19,8 @@ def main():
 
     images_left = sorted(glob.glob("data/Stereo_calibration_images/left*.png"))
     images_right = sorted(glob.glob("data/Stereo_calibration_images/right*.png"))
-    images_left_conveyor = sorted(glob.glob("data/Stereo_conveyor_without_occlusions/left/*.png"))
-    images_right_conveyor = sorted(glob.glob("data/Stereo_conveyor_without_occlusions/right/*.png"))
+    images_left_conveyor = sorted(glob.glob("data/Stereo_conveyor_with_occlusions/left/*.png"))
+    images_right_conveyor = sorted(glob.glob("data/Stereo_conveyor_with_occlusions/right/*.png"))
     images_conveyor = np.asarray([images_left_conveyor, images_right_conveyor]).T
     images = np.asarray([images_left, images_right]).T
 

@@ -1,5 +1,4 @@
 import torchvision
-import torchvision.transforms as T
 
 def getModel(num_classes, pretrained=True):
     model = torchvision.models.detection.fasterrcnn_resnet50_fpn(pretrained=pretrained)
