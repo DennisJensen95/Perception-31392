@@ -45,7 +45,7 @@ class Classifier:
 class NeuralNetClassifier:
 
     def __init__(self):
-        self.net_load_path = './data/NeuralNet/Classifier_Model_95.net'
+        self.net_load_path = './data/NeuralNet/Classifier_Model_after_dat.net'
         self.transform = transforms.Compose(
             [transforms.ToTensor(),
              transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])

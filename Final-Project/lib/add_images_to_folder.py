@@ -13,8 +13,9 @@ def return_highest_num_from_list(_list):
     return start_num
 
 def main_1():
-    base = './../../lowres/'
-    pd_dat = pd.read_csv(base + 'test_csv.csv')
+    print(os.getcwd())
+    base = './../../mart_pics/'
+    pd_dat = pd.read_csv(base + 'Boxesmartin.csv')
 
     start_book = return_highest_num_from_list(os.listdir('./../../pics_/books'))
     start_box = return_highest_num_from_list(os.listdir('./../../pics_/boxes'))
@@ -26,7 +27,9 @@ def main_1():
     base_go_to = './../../pics_/'
 
     for i in range(len(pd_dat['ImgPath'])):
-        img_path = pd_dat['ImgPath'][i] + '.JPG'
+        img_path = str(pd_dat['ImgPath'][i]) + '.jpg'
+        img_path = img_path[0:]
+        print(img_path)
         class_name = pd_dat['ClassName'][i]
 
         print(class_name)

@@ -73,12 +73,12 @@ def calculateTestAccuracy(loader, classifier, device, classes_decoder):
                     if classes_decoder[predicted[i]] == 'Box':
                         correct_box += 1
 
-    print(f'Accuracy of the network on the {total_cup + total_book + total_box} test images: %d %%' % (
-            100 * correct / total))
+    print(f'Accuracy of the network on the {total_cup + total_book + total_box} images: %f %%' %
+          (round(100.0 * correct / total, 4)))
 
-    print(f'Cup accruacy: {round(correct_cup / total_cup * 100, 2)} % out of {total_cup} cups')
-    print(f'Book accruacy: {round(correct_book / total_book * 100, 2)} % out of {total_book} Books')
-    print(f'Boxes accruacy: {round(correct_box / total_box * 100, 2)} % out of {total_box} Boxes')
+    print(f'Cup accruacy: {round(correct_cup / total_cup * 100, 4)} % out of {total_cup} cups')
+    print(f'Book accruacy: {round(correct_book / total_book * 100, 4)} % out of {total_book} Books')
+    print(f'Boxes accruacy: {round(correct_box / total_box * 100, 4)} % out of {total_box} Boxes')
 
     return 100 * correct / total, correct_box / total_box * 100, \
            correct_book / total_book * 100, correct_cup / total_cup * 100
@@ -87,11 +87,29 @@ def plotResultsCsv(csv_file):
     csv_file = pd.read_csv(csv_file)
     plt.figure()
     x = csv_file['ImgNum']*10
-
     plt.plot(x, csv_file['Loss'])
+    plt.legend(['Loss'])
+    plt.xlabel('Images Trained on')
+
+    plt.figure()
     plt.plot(x, csv_file['TrainPerc'])
     plt.plot(x, csv_file['TestPerc'])
-    plt.legend(['Loss', 'Accuracy train', 'Accuracy test'])
+    plt.legend(['Accuracy train', 'Accuracy test'])
+    plt.xlabel('Images Trained on')
+    plt.ylabel('Classification Accuracy %')
+
+    plt.figure()
+
+    plt.plot(x, csv_file['TestPerc'])
+    plt.plot(x, csv_file['TrainPerc'])
+    plt.plot(x, csv_file['TestCupPerc'])
+    plt.plot(x, csv_file['TestBoxPerc'])
+    plt.plot(x, csv_file['TestBookPerc'])
+    plt.legend(['Test data accuracy', 'Train data accuracy',
+                'Test data Cup accuracy', 'Test data Box accuracy',
+                'Test data Book accuracy'])
+    plt.xlabel('Images Trained on')
+    plt.ylabel('Classification Accuracy')
     plt.show()
 
 
