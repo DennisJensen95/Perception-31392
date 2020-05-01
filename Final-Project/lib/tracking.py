@@ -6,7 +6,6 @@ from PIL import Image
 import re
 from numpy.linalg import inv, pinv
 
-
 class Tracking:
     def __init__(self, running_mean_num=3):
         # The initial state (9x1).
@@ -142,23 +141,23 @@ class Tracking:
             self.x_pred = self.kal.predict()
             self.kal.correct(centroid)
             # Prediction
-            center_pred = (self.x_pred[0], self.x_pred[1], self.x_pred[2])
+            center_pred = (self.x_pred[0], self.x_pred[1], self.x_pred[2], self.x_pred[3], self.x_pred[4], self.x_pred[5])
         else:
             # Predict
             self.x_pred = self.kal.predict()
             # Save prediction
-            center_pred = (self.x_pred[0], self.x_pred[1], self.x_pred[2])
+            center_pred = (self.x_pred[0], self.x_pred[1], self.x_pred[2], self.x_pred[3], self.x_pred[4], self.x_pred[5])
 
         return center_pred
 
     def plot_pos(self, contour, centroid, img, pred=False):
         if not pred:
-            cx, cy = centroid
+            cx, cy = centroid[:3]
             (x, y, w, h) = cv2.boundingRect(contour)
             cv2.rectangle(img, (x, y), (x + w, y + h), (0, 0, 255), 3)
             cv2.circle(img, (cx, cy), radius=4, color=(0, 0, 255), thickness=5)
         else:
-            cx, cy, z = centroid
+            cx, cy, z = centroid[:3]
             cx, cy = int(cx), int(cy)
             (x, y, w, h) = cv2.boundingRect(contour)
             cv2.rectangle(img, (cx - int(w/2), cy - int(h/2)), (cx + int(w/2), cy + int(h/2)), (255, 0, 0), 3)
@@ -208,3 +207,16 @@ class Tracking:
             img.save(path)
 
         return img
+
+    def check_object_occlusion(self, mask, occlusion_mask):
+        mask_sum = np.array(mask, dtype=np.uint16) + np.array(occlusion_mask, dtype=np.uint16)
+        # print(mask)
+        # print(occlusion_mask)
+        print(mask_sum)
+        val = int(mask_sum.max())
+        print(val)
+        cv2.imshow('test', mask_sum)
+        if val <= 255:
+            return False
+        else:
+            return True

@@ -57,8 +57,18 @@ def export_pointcloud(disparity_map, colors, Q):
     write_ply('out.ply', out_points, out_colors)
     print(f'{out_fn} saved')
 
-def construct_z_coordinate(disparity_map, baseline, focal_length):
-    """"""
-    depth_map = baseline * focal_length / disparity_map
+def construct_z_coordinate(disparity_map, baseline, focal_length, last_depth):
+    """
+    Will calculate the depth
+    :param disparity_map:
+    :param baseline:
+    :param focal_length:
+    :return: depth in mm
+    """
+    try:
+        depth_map = baseline * focal_length / disparity_map
+    except ZeroDivisionError as e:
+        print(e)
+        return last_depth
 
     return depth_map
