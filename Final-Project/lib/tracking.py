@@ -212,9 +212,7 @@ class Tracking:
         mask_sum = np.array(mask, dtype=np.uint16) + np.array(occlusion_mask, dtype=np.uint16)
         # print(mask)
         # print(occlusion_mask)
-        print(mask_sum)
         val = int(mask_sum.max())
-        print(val)
         cv2.imshow('test', mask_sum)
         if val <= 255:
             return False
