@@ -2,3 +2,7 @@ Final-Project/data/
 Final-Project/rcnn-test-data/
 yolo*
 Final-Project/.idea/
+Final-Project/lib/__pycache__/
+Final-Project/Results/Saved_SVM_Models/
+Final-Project/Results/Cropped_Images/
+pic*

@@ -110,7 +110,7 @@ class YOLOClassifier:
         start = time.time()
         layerOutputs = self.yolo.forward(self.ln)
         end = time.time()
-        print(layerOutputs)
+        # print(layerOutputs)
         # show timing information on YOLO
         # print("[INFO] YOLO took {:.6f} seconds".format(end - start))
         classIDs = []

@@ -47,7 +47,9 @@ def main():
     baseline = 0.12 # m
     down_sample_ratio = 0.4
     focal_length = Cal.Q[2, 3] * down_sample_ratio
-
+    print(f'fc: {Cal.Q[2, 3]}')
+    print(f'cx: {Cal.Q[0, 3]}')
+    print(f'cy: {Cal.Q[1, 3]}')
     # Stereo Class
     min_disparity = 1  # 1
     num_disparity = 75  # 160
@@ -86,8 +88,6 @@ def main():
     cutout = cv2.cvtColor(cutout, cv2.COLOR_BGR2GRAY)
     # create binary mask of the cutout
     _, thresh = cv2.threshold(cutout, 240, 255, cv2.THRESH_BINARY_INV)
-    plt.imshow(thresh)
-    plt.show()
 
     predict_only = False
     img_array = []
@@ -96,6 +96,7 @@ def main():
     thickness = 2
     scale_text = 0.55
     last_z_coor = 0
+    objects_detected = 0
     for i in range(len(left_files)):
 
 
@@ -140,8 +141,6 @@ def main():
                 else:
                     predict_only = track.check_object_occlusion(mask, thresh)
 
-                print(predict_only)
-
                 if centroid and not predict_only:
                     """Kalman predict and update"""
                     cx, cy = centroid
@@ -159,7 +158,8 @@ def main():
                             confi = None
                         print(f'Detected: {label}: Confidence: {confi}')
 
-                    left_img = track.plot_pos(contours[-1], centroid, left_img, pred=False)
+                    if objects_detected > 1:
+                        left_img = track.plot_pos(contours[-1], centroid, left_img, pred=False)
 
                     z_coor = disparity_img[cy, cx]
                     last_z_coor = z_coor
@@ -168,27 +168,33 @@ def main():
 
                     if np.abs(last_centroid[0]-centroid[0]) > 125:
                         print(f'Reset kalman filter')
+                        objects_detected += 1
                         track.reset_kalman()
 
                     centroid_pred = track.kalman_cv2(centroid_pos, update=True)
 
-                    left_img = track.plot_pos(contours[-1], centroid_pred, left_img, pred=True)
+                    if objects_detected > 1:
+                        left_img = track.plot_pos(contours[-1], centroid_pred, left_img, pred=True)
 
                     (x, y, w, h) = cv2.boundingRect(contours[-1])
-                    cv2.putText(left_img, label_predict, (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, scale_text, (0, 0, 255), thickness=thickness)
+
+                    if objects_detected > 1:
+                        cv2.putText(left_img, label_predict, (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, scale_text, (0, 0, 255), thickness=thickness)
 
                     # Display text on screen
                     z_coor_m = construct_z_coordinate(z_coor, baseline, focal_length, last_z_coor)
                     z_coor_pred_m = construct_z_coordinate(centroid_pred[2][0], baseline, focal_length, last_centroid_pred[2][0])
-                    z_coor_pred_m_s = construct_z_coordinate(centroid_pred[5][0], baseline, focal_length, last_centroid_pred[5][0])
-                    measurement_string = f'Measurement: (x, y, z) = ({centroid[0]},{centroid[1]},{z_coor_m:.2f})'
-                    cv2.putText(left_img, measurement_string, (15, 15), cv2.FONT_HERSHEY_SIMPLEX, scale_text, (0, 0, 255), thickness=thickness)
-                    prediction_string = f'Prediction: (x, y, z) = ({centroid_pred[0][0]:.2f},{centroid_pred[1][0]:.2f},{z_coor_pred_m:.2f})'
-                    cv2.putText(left_img, prediction_string, (15, 35), cv2.FONT_HERSHEY_SIMPLEX, scale_text, (255, 0, 0), thickness=thickness)
-                    prediction_string = f'Prediction: (x_vel, y_vel, z_vel) = ({centroid_pred[3][0]:.2f},{centroid_pred[4][0]:.2f},{z_coor_pred_m_s:.2f})'
-                    cv2.putText(left_img, prediction_string, (15, 55), cv2.FONT_HERSHEY_SIMPLEX, scale_text,
-                                (255, 0, 0),
-                                thickness=thickness)
+                    # z_coor_pred_m_s = construct_z_coordinate(centroid_pred[5][0], baseline, focal_length, last_centroid_pred[5][0])
+                    if objects_detected > 1:
+                        measurement_string = f'Measurement: (x, y, z) = ({centroid[0]}px,{centroid[1]}px,{z_coor_m:.2f}m)'
+                        cv2.putText(left_img, measurement_string, (15, 15), cv2.FONT_HERSHEY_SIMPLEX, scale_text, (0, 0, 255), thickness=thickness)
+                        prediction_string = f'Prediction: (x, y, z) = ({centroid_pred[0][0]:.2f}px,{centroid_pred[1][0]:.2f}px,{z_coor_pred_m:.2f}m)'
+                        cv2.putText(left_img, prediction_string, (15, 35), cv2.FONT_HERSHEY_SIMPLEX, scale_text, (255, 0, 0), thickness=thickness)
+
+                    # prediction_string = f'Prediction: (x_vel, y_vel, z_vel) = ({centroid_pred[3][0]:.2f},{centroid_pred[4][0]:.2f},{z_coor_pred_m_s:.2f})'
+                    # cv2.putText(left_img, prediction_string, (15, 55), cv2.FONT_HERSHEY_SIMPLEX, scale_text,
+                    #             (255, 0, 0),
+                    #             thickness=thickness)
                     last_centroid = centroid
                     last_centroid_pred = centroid_pred
 
@@ -197,6 +203,7 @@ def main():
                 else:
                     if np.abs(last_centroid[0]-centroid[0]) > 125:
                         print(f'Reset kalman filter')
+                        objects_detected += 1
                         track.reset_kalman()
             else:
                 predict_only = True
@@ -205,25 +212,28 @@ def main():
             if predict_only:
                 """Kalman Predict"""
                 centroid_pred = track.kalman_cv2(update=False)
-                left_img = track.plot_pos(last_found_contour, centroid_pred, left_img, pred=True)
-                (x, y, w, h) = cv2.boundingRect(last_found_contour[-1])
-                cv2.putText(left_img, label_predict, (int(centroid_pred[0][0])-int(w/2),
-                                                      int(centroid_pred[1][0])-int(h/2)),
-                            cv2.FONT_HERSHEY_SIMPLEX, scale_text, (0, 0, 255), thickness=thickness)
+                if objects_detected > 1:
+                    left_img = track.plot_pos(last_found_contour, centroid_pred, left_img, pred=True)
+                    (x, y, w, h) = cv2.boundingRect(last_found_contour[-1])
+                    cv2.putText(left_img, label_predict, (int(centroid_pred[0][0])-int(w/2),
+                                                          int(centroid_pred[1][0])-int(h/2)),
+                                cv2.FONT_HERSHEY_SIMPLEX, scale_text, (0, 0, 255), thickness=thickness)
 
 
                 # Display text on screen
                 z_coor_pred_m = construct_z_coordinate(centroid_pred[2][0], baseline, focal_length,
                                                        last_centroid_pred[2][0])
-                z_coor_pred_m_s = construct_z_coordinate(centroid_pred[5][0], baseline, focal_length,
-                                                         last_centroid_pred[5][0])
-                prediction_string = f'Prediction: (x, y, z) = ({centroid_pred[0][0]:.2f},{centroid_pred[1][0]:.2f},{z_coor_pred_m:.2f})'
-                cv2.putText(left_img, prediction_string, (15, 35), cv2.FONT_HERSHEY_SIMPLEX, scale_text, (255, 0, 0),
-                            thickness=thickness)
-                prediction_string = f'Prediction: (x_vel, y_vel, z_vel) = ({centroid_pred[3][0]:.2f},{centroid_pred[4][0]:.2f},{z_coor_pred_m_s:.2f})'
-                cv2.putText(left_img, prediction_string, (15, 55), cv2.FONT_HERSHEY_SIMPLEX, scale_text,
-                            (255, 0, 0),
-                            thickness=thickness)
+                # z_coor_pred_m_s = construct_z_coordinate(centroid_pred[5][0], baseline, focal_length,
+                #                                          last_centroid_pred[5][0])
+                prediction_string = f'Prediction: (x, y, z) = ({centroid_pred[0][0]:.2f}px,{centroid_pred[1][0]:.2f}px,{z_coor_pred_m:.2f}m)'
+                if objects_detected > 1:
+                    cv2.putText(left_img, prediction_string, (15, 35), cv2.FONT_HERSHEY_SIMPLEX, scale_text, (255, 0, 0),
+                                thickness=thickness)
+
+                # prediction_string = f'Prediction: (x_vel, y_vel, z_vel) = ({centroid_pred[3][0]:.2f},{centroid_pred[4][0]:.2f},{z_coor_pred_m_s:.2f})'
+                # cv2.putText(left_img, prediction_string, (15, 55), cv2.FONT_HERSHEY_SIMPLEX, scale_text,
+                #             (255, 0, 0),
+                #             thickness=thickness)
 
                 last_centroid_pred = centroid_pred
 

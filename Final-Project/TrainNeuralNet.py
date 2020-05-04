@@ -22,14 +22,14 @@ testset = pd.read_csv('./test_csv.csv')
 
 trainLoader = SimpleDataLoader(trainset, transform, classes_encoder)
 testLoader = SimpleDataLoader(testset, transform, classes_encoder, base='./Results/Cropped_Images/', suffix='.png')
-trainLoader = torch.utils.data.DataLoader(trainLoader, batch_size=10, shuffle=True, num_workers=4)
-testLoader = torch.utils.data.DataLoader(testLoader, batch_size=10, shuffle=True, num_workers=4)
+trainLoader = torch.utils.data.DataLoader(trainLoader, batch_size=50, shuffle=True, num_workers=4)
+testLoader = torch.utils.data.DataLoader(testLoader, batch_size=50, shuffle=True, num_workers=4)
 
 lr = 0.00001
 image_shape = (3, 224, 224)
 num_classes = len(classes_encoder)
 classifier = Net(image_shape, num_classes, lr).to(device)
-epochs = 10
+epochs = 5
 
 def imshow(img):
     img = img / 2 + 0.5     # unnormalize
@@ -81,23 +81,23 @@ for epoch in range(epochs):
         # print statistics
         running_loss += loss.item()
         if i % 60 == 0:
-            score_test, box_perc, book_perc, cup_perc = calculateTestAccuracy(testLoader, classifier, device, classes_decoder)
-            test_perc.append(score_test)
-            cup_perc_test.append(cup_perc)
-            book_perc_test.append(book_perc)
-            box_perc_test.append(box_perc)
-
-            score, box_perc, book_perc, cup_perc = calculateTestAccuracy(trainLoader, classifier, device, classes_decoder)
-            train_perc.append(score)
-            cup_perc_train.append(cup_perc)
-            book_perc_train.append(book_perc)
-            box_perc_train.append(box_perc)
+            # score_test, box_perc, book_perc, cup_perc = calculateTestAccuracy(testLoader, classifier, device, classes_decoder)
+            # test_perc.append(score_test)
+            # cup_perc_test.append(cup_perc)
+            # book_perc_test.append(book_perc)
+            # box_perc_test.append(box_perc)
+            #
+            # score, box_perc, book_perc, cup_perc = calculateTestAccuracy(trainLoader, classifier, device, classes_decoder)
+            # train_perc.append(score)
+            # cup_perc_train.append(cup_perc)
+            # book_perc_train.append(book_perc)
+            # box_perc_train.append(box_perc)
 
             loss_vec.append(running_loss)
 
-            if highest_perc < score_test:
-                highest_perc = score_test
-                torch.save(classifier.state_dict(), path_to_save)
+            # if highest_perc < score_test:
+            #     highest_perc = score_test
+            #     torch.save(classifier.state_dict(), path_to_save)
 
 
             img_trained.append(img_num)

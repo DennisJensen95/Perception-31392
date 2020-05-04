@@ -17,11 +17,12 @@ class Net(nn.Module):
         self.classifier = nn.Sequential(
             nn.Linear(out_features, 4096),
             nn.ReLU(),
-            nn.Dropout(p=0.3),
+            nn.Dropout(p=0.4),
             nn.Linear(4096, 2048),
             nn.ReLU(),
             nn.Dropout(p=0.3),
-            nn.Linear(2048, classes)
+            nn.Linear(2048, classes),
+            nn.Softmax()
         )
 
         self.optimizer = optim.Adam(self.parameters(), lr=learning_rate, weight_decay=1e-2)
@@ -100,13 +101,12 @@ def plotResultsCsv(csv_file):
 
     plt.figure()
 
-    plt.plot(x, csv_file['TestPerc'])
-    plt.plot(x, csv_file['TrainPerc'])
+    # plt.plot(x, csv_file['TestPerc'])
+    # plt.plot(x, csv_file['TrainPerc'])
     plt.plot(x, csv_file['TestCupPerc'])
     plt.plot(x, csv_file['TestBoxPerc'])
     plt.plot(x, csv_file['TestBookPerc'])
-    plt.legend(['Test data accuracy', 'Train data accuracy',
-                'Test data Cup accuracy', 'Test data Box accuracy',
+    plt.legend(['Test data Cup accuracy', 'Test data Box accuracy',
                 'Test data Book accuracy'])
     plt.xlabel('Images Trained on')
     plt.ylabel('Classification Accuracy')

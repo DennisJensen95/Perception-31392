@@ -210,10 +210,7 @@ class Tracking:
 
     def check_object_occlusion(self, mask, occlusion_mask):
         mask_sum = np.array(mask, dtype=np.uint16) + np.array(occlusion_mask, dtype=np.uint16)
-        # print(mask)
-        # print(occlusion_mask)
         val = int(mask_sum.max())
-        cv2.imshow('test', mask_sum)
         if val <= 255:
             return False
         else:
